@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Support\Str;
 use Webmozart\Assert\Assert;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -151,9 +152,17 @@ class ApiKey extends Model
     }
 
     /**
+     * Returns the permission for the given resource.
+     */
+    public function getPermission(string $resource): int
+    {
+        return $permissions[$resource] ?? AdminAcl::NONE;
+    }
+
+    /**
      * Returns a list of all possible permission keys.
      */
-    public static function getPermissionsList(): array
+    public static function getPermissionList(): array
     {
         return collect(class_implements(new \App\Models\Contracts\ApiResourceInterface))->map((function ($resource) {
             return $resource->getApiResourceName();

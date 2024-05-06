@@ -32,7 +32,7 @@ class AdminAcl
      */
     public static function check(ApiKey $key, string $resource, int $action = self::READ): bool
     {
-        return self::can(data_get($key, 'permissions.' . $resource, self::NONE), $action);
+        return self::can($key->getPermission($resource), $action);
     }
 
     /**
@@ -40,6 +40,6 @@ class AdminAcl
      */
     public static function getResourceList(): array
     {
-        return ApiKey::getPermissionsList();
+        return ApiKey::getPermissionList();
     }
 }
