@@ -119,6 +119,10 @@ class ApiKey extends Model
         'expires_at' => 'nullable|date',
     ];
 
+    protected $attributes = [
+        'permissions' => [],
+    ];
+
     protected function casts(): array
     {
         return [
