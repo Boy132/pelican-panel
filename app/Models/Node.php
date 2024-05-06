@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\Traits\ApiResourceInterface;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -38,7 +39,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
  */
-class Node extends Model
+class Node extends Model implements ApiResourceInterface
 {
     use Notifiable;
 
@@ -128,6 +129,11 @@ class Node extends Model
     public function getRouteKeyName(): string
     {
         return 'id';
+    }
+
+    public function getApiResourceName(): string
+    {
+        return 'nodes';
     }
 
     protected static function booted(): void

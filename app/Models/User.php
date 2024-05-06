@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
+use App\Models\Traits\ApiResourceInterface;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -83,7 +84,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  *
  * @mixin \Eloquent
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
+class User extends Model implements ApiResourceInterface, AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -192,6 +193,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getRouteKeyName(): string
     {
         return 'id';
+    }
+
+    public function getApiResourceName(): string
+    {
+        return 'users';
     }
 
     /**

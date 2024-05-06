@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Models\Traits\ApiResourceInterface;
 
 /**
  * \App\Models\Server.
@@ -103,7 +104,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  *
  * @mixin \Eloquent
  */
-class Server extends Model
+class Server extends Model implements ApiResourceInterface
 {
     use Notifiable;
 
@@ -185,6 +186,11 @@ class Server extends Model
             'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
         ];
+    }
+
+    public function getApiResourceName(): string
+    {
+        return 'servers';
     }
 
     /**

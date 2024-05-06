@@ -76,9 +76,6 @@ class ApiKey extends Model
      */
     public const KEY_LENGTH = 32;
 
-    // TODO: remove constants
-    public const RESOURCES = ['servers', 'nodes', 'allocations', 'users', 'eggs', 'database_hosts', 'server_databases'];
-
     /**
      * The table associated with the model.
      */
@@ -114,6 +111,7 @@ class ApiKey extends Model
         'identifier' => 'required|string|size:16|unique:api_keys,identifier',
         'token' => 'required|string',
         'permissions' => 'required|array',
+        'permissions.*' => 'integer|min:0|max:3',
         'memo' => 'required|nullable|string|max:500',
         'allowed_ips' => 'nullable|array',
         'allowed_ips.*' => 'string',
@@ -157,8 +155,9 @@ class ApiKey extends Model
      */
     public static function getPermissionsList(): array
     {
-        // TODO: remove constants
-        return self::RESOURCES;
+        return collect(class_implements(new \App\Models\Traits\ApiResourceInterface))->map((function ($resource) {
+            return $resource->getApiResourceName();
+        }))->toArray();
     }
 
     /**

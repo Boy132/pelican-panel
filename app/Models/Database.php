@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\Extensions\HashidsInterface;
+use App\Models\Traits\ApiResourceInterface;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\DB;
  * @property \App\Models\Server $server
  * @property \App\Models\DatabaseHost $host
  */
-class Database extends Model
+class Database extends Model implements ApiResourceInterface
 {
     /**
      * The resource name for this model when it is transformed into an
@@ -70,6 +71,11 @@ class Database extends Model
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();
+    }
+
+    public function getApiResourceName(): string
+    {
+        return 'server_databases';
     }
 
     /**
