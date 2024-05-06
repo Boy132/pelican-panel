@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\ApiResourceInterface;
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

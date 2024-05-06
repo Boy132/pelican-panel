@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\Extensions\HashidsInterface;
-use App\Models\Traits\ApiResourceInterface;
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Support\Facades\DB;
 
 /**

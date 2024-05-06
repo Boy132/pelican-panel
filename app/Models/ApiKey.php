@@ -155,7 +155,7 @@ class ApiKey extends Model
      */
     public static function getPermissionsList(): array
     {
-        return collect(class_implements(new \App\Models\Traits\ApiResourceInterface))->map((function ($resource) {
+        return collect(class_implements(new \App\Models\Contracts\ApiResourceInterface))->map((function ($resource) {
             return $resource->getApiResourceName();
         }))->toArray();
     }

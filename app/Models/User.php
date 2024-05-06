@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
-use App\Models\Traits\ApiResourceInterface;
+use App\Models\Contracts\ApiResourceInterface;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;

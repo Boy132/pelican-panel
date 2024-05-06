@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
-use App\Models\Traits\ApiResourceInterface;
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;

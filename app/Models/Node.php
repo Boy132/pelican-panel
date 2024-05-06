@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\Service\HasActiveServersException;
-use App\Models\Traits\ApiResourceInterface;
+use App\Models\Contracts\ApiResourceInterface;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
 use Illuminate\Support\Facades\Http;

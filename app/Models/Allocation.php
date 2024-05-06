@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
-use App\Models\Traits\ApiResourceInterface;
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
