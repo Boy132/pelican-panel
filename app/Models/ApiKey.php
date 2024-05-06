@@ -94,7 +94,6 @@ class ApiKey extends Model
         'memo',
         'last_used_at',
         'expires_at',
-        'permissions',
     ];
 
     /**
