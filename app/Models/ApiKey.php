@@ -89,6 +89,7 @@ class ApiKey extends Model
         'key_type',
         'identifier',
         'token',
+        'permissions',
         'allowed_ips',
         'memo',
         'last_used_at',
