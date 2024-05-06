@@ -1,7 +1,16 @@
 <?php
 
+use App\Models\Allocation;
+use App\Models\ApiKey;
+use App\Models\Database;
+use App\Models\DatabaseHost;
+use App\Models\Egg;
+use App\Models\Node;
+use App\Models\Server;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -15,7 +24,21 @@ return new class extends Migration
             $table->text('permissions');
         });
 
-        // TODO: convert existing api keys to new format
+        foreach (ApiKey::query() as $apiKey) {
+            $permissions = [
+                Server::RESOURCE_NAME => intval($apiKey->r_servers ?? 0),
+                Node::RESOURCE_NAME => intval($apiKey->r_nodes ?? 0),
+                Allocation::RESOURCE_NAME => intval($apiKey->r_allocations ?? 0),
+                User::RESOURCE_NAME => intval($apiKey->r_users ?? 0),
+                Egg::RESOURCE_NAME => intval($apiKey->r_eggs ?? 0),
+                DatabaseHost::RESOURCE_NAME => intval($apiKey->r_database_hosts ?? 0),
+                Database::RESOURCE_NAME => intval($apiKey->r_server_databases ?? 0),
+            ];
+
+            DB::table('api_keys')
+                ->where('id', $apiKey->id)
+                ->update(['permissions' => $permissions]);
+        }
 
         Schema::table('api_keys', function (Blueprint $table) {
             $table->dropColumn([
@@ -36,12 +59,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->dropColumn('permissions');
-        });
-
-        // TODO: convert existing api keys back to old format
-
-        Schema::table('api_keys', function (Blueprint $table) {
             $table->unsignedTinyInteger('r_servers')->default(0);
             $table->unsignedTinyInteger('r_nodes')->default(0);
             $table->unsignedTinyInteger('r_allocations')->default(0);
@@ -49,6 +66,24 @@ return new class extends Migration
             $table->unsignedTinyInteger('r_eggs')->default(0);
             $table->unsignedTinyInteger('r_database_hosts')->default(0);
             $table->unsignedTinyInteger('r_server_databases')->default(0);
+        });
+
+        foreach (ApiKey::query() as $apiKey) {
+            DB::table('api_keys')
+                ->where('id', $apiKey->id)
+                ->update([
+                    'r_servers' => $apiKey->permissions[Server::RESOURCE_NAME],
+                    'r_nodes' => $apiKey->permissions[Node::RESOURCE_NAME],
+                    'r_allocations' => $apiKey->permissions[Allocation::RESOURCE_NAME],
+                    'r_users' => $apiKey->permissions[User::RESOURCE_NAME],
+                    'r_eggs' => $apiKey->permissions[Egg::RESOURCE_NAME],
+                    'r_database_hosts' => $apiKey->permissions[DatabaseHost::RESOURCE_NAME],
+                    'r_server_databases' => $apiKey->permissions[Database::RESOURCE_NAME],
+                ]);
+        }
+
+        Schema::table('api_keys', function (Blueprint $table) {
+            $table->dropColumn('permissions');
         });
     }
 };
