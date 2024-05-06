@@ -94,7 +94,7 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
                 Egg::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
                 DatabaseHost::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
                 Database::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
-            ], $permissions)
+            ], $permissions),
         ]);
     }
 
