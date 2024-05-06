@@ -52,7 +52,7 @@ class Egg extends Model implements ApiResourceInterface
 {
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'egg';
 
@@ -171,7 +171,7 @@ class Egg extends Model implements ApiResourceInterface
 
     public function getApiResourceName(): string
     {
-        return 'eggs';
+        return self::RESOURCE_NAME;
     }
 
     /**

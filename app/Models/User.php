@@ -98,7 +98,7 @@ class User extends Model implements ApiResourceInterface, AuthenticatableContrac
 
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'user';
 
@@ -197,7 +197,7 @@ class User extends Model implements ApiResourceInterface, AuthenticatableContrac
 
     public function getApiResourceName(): string
     {
-        return 'users';
+        return self::RESOURCE_NAME;
     }
 
     /**
