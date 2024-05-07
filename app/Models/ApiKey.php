@@ -156,7 +156,7 @@ class ApiKey extends Model
      */
     public function getPermission(string $resource): int
     {
-        return $permissions[$resource] ?? AdminAcl::NONE;
+        return $this->permissions[$resource] ?? AdminAcl::NONE;
     }
 
     /**
