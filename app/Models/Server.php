@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Models\Contracts\ApiResourceInterface;
 
 /**
  * \App\Models\Server.
@@ -103,13 +104,13 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  *
  * @mixin \Eloquent
  */
-class Server extends Model
+class Server extends Model implements ApiResourceInterface
 {
     use Notifiable;
 
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'server';
 
@@ -185,6 +186,11 @@ class Server extends Model
             'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
         ];
+    }
+
+    public function getApiResourceName(): string
+    {
+        return self::RESOURCE_NAME;
     }
 
     /**

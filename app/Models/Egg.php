@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -47,11 +48,11 @@ use Illuminate\Support\Str;
  * @property \App\Models\Egg|null $scriptFrom
  * @property \App\Models\Egg|null $configFrom
  */
-class Egg extends Model
+class Egg extends Model implements ApiResourceInterface
 {
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'egg';
 
@@ -166,6 +167,11 @@ class Egg extends Model
     public function getRouteKeyName(): string
     {
         return 'id';
+    }
+
+    public function getApiResourceName(): string
+    {
+        return self::RESOURCE_NAME;
     }
 
     /**

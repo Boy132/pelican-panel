@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,11 +18,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\CarbonImmutable $created_at
  * @property \Carbon\CarbonImmutable $updated_at
  */
-class DatabaseHost extends Model
+class DatabaseHost extends Model implements ApiResourceInterface
 {
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'database_host';
 
@@ -68,6 +69,11 @@ class DatabaseHost extends Model
     public function getRouteKeyName(): string
     {
         return 'id';
+    }
+
+    public function getApiResourceName(): string
+    {
+        return self::RESOURCE_NAME;
     }
 
     /**

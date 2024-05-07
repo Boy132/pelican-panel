@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -40,11 +41,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-class Allocation extends Model
+class Allocation extends Model implements ApiResourceInterface
 {
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'allocation';
 
@@ -86,6 +87,11 @@ class Allocation extends Model
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();
+    }
+
+    public function getApiResourceName(): string
+    {
+        return self::RESOURCE_NAME;
     }
 
     /**

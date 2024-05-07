@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\Extensions\HashidsInterface;
+use App\Models\Contracts\ApiResourceInterface;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,11 +22,11 @@ use Illuminate\Support\Facades\DB;
  * @property \App\Models\Server $server
  * @property \App\Models\DatabaseHost $host
  */
-class Database extends Model
+class Database extends Model implements ApiResourceInterface
 {
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'server_database';
 
@@ -70,6 +71,11 @@ class Database extends Model
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();
+    }
+
+    public function getApiResourceName(): string
+    {
+        return self::RESOURCE_NAME;
     }
 
     /**
