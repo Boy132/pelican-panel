@@ -3,10 +3,14 @@
 namespace App\Transformers\Api\Application;
 
 use App\Models\Server;
+use App\Models\Node;
+use App\Models\User;
+use App\Models\Egg;
+use App\Models\Database;
+use App\Models\Allocation;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 use App\Services\Servers\EnvironmentService;
 
 class ServerTransformer extends BaseTransformer
@@ -95,7 +99,7 @@ class ServerTransformer extends BaseTransformer
      */
     public function includeAllocations(Server $server): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_ALLOCATIONS)) {
+        if (!$this->authorize(Allocation::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -111,7 +115,7 @@ class ServerTransformer extends BaseTransformer
      */
     public function includeSubusers(Server $server): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_USERS)) {
+        if (!$this->authorize(User::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -127,7 +131,7 @@ class ServerTransformer extends BaseTransformer
      */
     public function includeUser(Server $server): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_USERS)) {
+        if (!$this->authorize(User::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -143,7 +147,7 @@ class ServerTransformer extends BaseTransformer
      */
     public function includeEgg(Server $server): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_EGGS)) {
+        if (!$this->authorize(Egg::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -159,7 +163,7 @@ class ServerTransformer extends BaseTransformer
      */
     public function includeVariables(Server $server): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVERS)) {
+        if (!$this->authorize(Server::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -175,7 +179,7 @@ class ServerTransformer extends BaseTransformer
      */
     public function includeNode(Server $server): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+        if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -191,7 +195,7 @@ class ServerTransformer extends BaseTransformer
      */
     public function includeDatabases(Server $server): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVER_DATABASES)) {
+        if (!$this->authorize(Database::RESOURCE_NAME)) {
             return $this->null();
         }
 
