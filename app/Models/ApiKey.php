@@ -98,6 +98,13 @@ class ApiKey extends Model
     ];
 
     /**
+     * Default attributes when creating a new model.
+     */
+    protected $attributes = [
+        'permissions' => [],
+    ];
+
+    /**
      * Fields that should not be included when calling toArray() or toJson()
      * on this model.
      */
@@ -111,7 +118,7 @@ class ApiKey extends Model
         'key_type' => 'present|integer|min:0|max:4',
         'identifier' => 'required|string|size:16|unique:api_keys,identifier',
         'token' => 'required|string',
-        'permissions' => 'required|array',
+        'permissions' => 'array',
         'permissions.*' => 'integer|min:0|max:3',
         'memo' => 'required|nullable|string|max:500',
         'allowed_ips' => 'nullable|array',

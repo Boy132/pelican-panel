@@ -30,7 +30,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
-            'permissions' => [],
         ]);
 
         $response = $this->actingAs($user)->get('/api/client/account/api-keys')
@@ -59,7 +58,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         ApiKey::factory()->times(10)->create([
             'user_id' => User::factory()->create()->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,
-            'permissions' => [],
         ]);
 
         $response = $this->actingAs($user)->postJson('/api/client/account/api-keys', [
@@ -107,7 +105,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         $user = User::factory()->create();
         ApiKey::factory()->times(25)->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
-            'permissions' => [],
         ]);
 
         $this->actingAs($user)->postJson('/api/client/account/api-keys', [
@@ -163,7 +160,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
-            'permissions' => [],
         ]);
 
         $response = $this->actingAs($user)->delete('/api/client/account/api-keys/' . $key->identifier);
@@ -184,7 +180,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         $key = ApiKey::factory()->create([
             'user_id' => $user->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,
-            'permissions' => [],
         ]);
 
         $response = $this->actingAs($user)->delete('/api/client/account/api-keys/1234');
@@ -207,7 +202,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user2)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
-            'permissions' => [],
         ]);
 
         $this->actingAs($user)
@@ -229,7 +223,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_APPLICATION,
-            'permissions' => [],
         ]);
 
         $this->actingAs($user)
