@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Servers;
+namespace App\Services\Plugins;
 
 use App\Models\Plugin;
 use Illuminate\Support\Composer;
