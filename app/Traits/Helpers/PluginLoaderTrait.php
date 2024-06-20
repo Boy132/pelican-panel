@@ -6,6 +6,7 @@ use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use Exception;
 use Filament\Panel;
+use Illuminate\Support\Facades\Schema;
 
 trait PluginLoaderTrait
 {
@@ -13,6 +14,11 @@ trait PluginLoaderTrait
     {
         // Don't load any plugins during tests
         if (config('app.env') === 'testing') {
+            return;
+        }
+
+        // Make sure the plugins table exist. Otherwise, migrations would fail on first install.
+        if (!Schema::hasTable('plugins')) {
             return;
         }
 
