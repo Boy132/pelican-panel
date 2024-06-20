@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('plugins', function (Blueprint $table) {
             $table->string('package')->unique();
             $table->string('class');
+            $table->string('status')->default('enabled');
             $table->string('name');
             $table->string('panel');
             $table->string('category');
-            $table->boolean('enabled');
             $table->timestamps();
         });
     }
