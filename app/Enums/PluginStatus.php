@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum PluginStatus: string
+use Filament\Support\Contracts\HasLabel;
+
+enum PluginStatus: string implements HasLabel
 {
     case Disabled = 'disabled';
     case Enabled = 'enabled';
@@ -24,5 +26,10 @@ enum PluginStatus: string
             self::Enabled => 'success',
             self::Errored => 'danger',
         };
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->name;
     }
 }

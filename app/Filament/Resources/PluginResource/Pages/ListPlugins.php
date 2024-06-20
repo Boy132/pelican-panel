@@ -5,8 +5,9 @@ namespace App\Filament\Resources\PluginResource\Pages;
 use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use App\Filament\Resources\PluginResource;
-use App\Services\Servers\PluginInstallService;
+use App\Services\Plugins\PluginInstallService;
 use Filament\Actions;
+use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
@@ -69,9 +70,7 @@ class ListPlugins extends ListRecords
             ->emptyStateActions([
                 Tables\Actions\Action::make('install')
                     ->label('Install Plugin')
-                    ->form(fn () => [
-                        // TODO
-                    ])
+                    ->form(fn () => $this->installForm())
                     ->action(fn (array $data) => resolve(PluginInstallService::class)->install($data)),
             ]);
     }
@@ -81,10 +80,44 @@ class ListPlugins extends ListRecords
         return [
             Actions\Action::make('install')
                 ->label('Install Plugin')
-                ->form(fn () => [
-                    // TODO
-                ])
+                ->form(fn () => $this->installForm())
                 ->action(fn (array $data) => resolve(PluginInstallService::class)->install($data)),
+        ];
+    }
+
+    private function installForm(): array
+    {
+        // TOOD
+        return [
+            Forms\Components\TextInput::make('package')
+                ->required(),
+            Forms\Components\TextInput::make('class')
+                ->required(),
+            Forms\Components\Select::make('status')
+                ->required()
+                ->hidden()
+                ->options(PluginStatus::class)
+                ->default(PluginStatus::Enabled),
+            Forms\Components\TextInput::make('name')
+                ->required(),
+            Forms\Components\TextInput::make('description')
+                ->required(),
+            Forms\Components\TextInput::make('author')
+                ->required(),
+            Forms\Components\Select::make('panel')
+                ->required()
+                ->options([
+                    'admin' => 'Admin',
+                    'app' => 'Client',
+                    'both' => 'Admin & Client',
+                ]),
+            Forms\Components\Select::make('category')
+                ->required()
+                ->options([
+                    'plugin' => 'Plugin',
+                    'theme' => 'Theme',
+                    'language' => 'Language',
+                ]),
         ];
     }
 }
