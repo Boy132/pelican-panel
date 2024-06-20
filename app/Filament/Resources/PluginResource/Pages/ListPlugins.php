@@ -26,16 +26,21 @@ class ListPlugins extends ListRecords
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->description(fn (Plugin $record): ?string => (strlen($record->description) > 60) ? substr($record->description, 0, 60).'...' : $record->description)
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('author')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('panel')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('category')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('status')
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')
                     ->icon(fn (PluginStatus $state) => $state->icon())
-                    ->color(fn (PluginStatus $state) => $state->color())
+                    ->iconColor(fn (PluginStatus $state) => $state->color())
                     ->sortable(),
             ])
             ->actions([
