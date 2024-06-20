@@ -21,7 +21,7 @@ class ListPlugins extends ListRecords
             ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->description(fn ($record): ?string => (strlen($record->description) > 80) ? substr($record->description, 0, 80).'...' : $record->description)
+                    ->description(fn (Plugin $record): ?string => (strlen($record->description) > 80) ? substr($record->description, 0, 80).'...' : $record->description)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
                     ->searchable(),
@@ -35,6 +35,8 @@ class ListPlugins extends ListRecords
                     ->sortable(),
             ])
             ->actions([
+                Tables\Actions\Action::make('view')
+                    ->url(fn (Plugin $record): string => 'https://github.com/' . $record->package),
                 Tables\Actions\Action::make('enable')
                     ->color('success')
                     ->hidden(fn (Plugin $record) => !$record->isDisabled())
