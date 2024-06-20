@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
+use App\Models\Plugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -31,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel
             ->default()
             ->id('admin')
             ->path('admin')
@@ -78,5 +79,17 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        // Don't load any plugins during tests
+        if (config('app.env') !== 'testing') {
+            $plugins = Plugin::query()->where('panel', $panel->getId())->get();
+            /** @var Plugin $plugin */
+            foreach ($plugins as $plugin) {
+                $pluginClass = $plugin->class;
+                $panel->plugin($pluginClass::make());
+            }
+        }
+
+        return $panel;
     }
 }
