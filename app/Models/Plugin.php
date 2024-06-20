@@ -28,7 +28,7 @@ class Plugin extends Model
         'package' => 'required|string',
         'class' => 'required|string',
         'name' => 'required|string',
-        'panel' => 'required|string|in:admin,app',
+        'panel' => 'required|string|in:admin,app,both',
         'category' => 'required|string|in:plugin,theme,language',
         'enabled' => 'boolean',
     ];
@@ -43,5 +43,10 @@ class Plugin extends Model
     public function getRouteKeyName(): string
     {
         return 'package';
+    }
+
+    public function shouldLoad(string $panelId): bool
+    {
+        return $this->enabled && ($this->panel === 'both' || $this->panel === $panelId);
     }
 }
