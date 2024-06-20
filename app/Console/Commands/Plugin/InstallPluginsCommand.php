@@ -19,13 +19,12 @@ class InstallPluginsCommand extends Command
 
         if (count($pluginPackages) < 1) {
             $this->line('No plugins installed');
+
             return;
         }
 
-        if (!$this->input->isInteractive() || $this->confirm('Do you want to (re-) install ' . count($pluginPackages) . ' plugins?')) {
-            /** @var Composer $composer */
-            $composer = app(Composer::class);
-            $composer->requirePackages($pluginPackages, false, $this->output);
-        }
+        /** @var Composer $composer */
+        $composer = app(Composer::class);
+        $composer->requirePackages($pluginPackages, false, $this->output);
     }
 }

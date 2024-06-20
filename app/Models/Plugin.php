@@ -56,11 +56,6 @@ class Plugin extends Model
         return !$this->isDisabled() && ($this->panel === 'both' || $this->panel === $panelId);
     }
 
-    public function isEnabled(): bool
-    {
-        return $this->status === PluginStatus::Enabled;
-    }
-
     public function isDisabled(): bool
     {
         return $this->status === PluginStatus::Disabled;
