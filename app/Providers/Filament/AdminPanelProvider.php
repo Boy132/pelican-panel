@@ -4,8 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
-use App\Models\Plugin;
-use Exception;
+use App\Traits\Helpers\PluginLoaderTrait;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -24,6 +23,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+    use PluginLoaderTrait;
+
     public function boot()
     {
         FilamentAsset::registerCssVariables([
@@ -81,25 +82,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
 
-        // Don't load any plugins during tests
-        if (config('app.env') !== 'testing') {
-            $plugins = Plugin::query()->where('enabled', true)->get();
-
-            /** @var Plugin $plugin */
-            foreach ($plugins as $plugin) {
-                if (!$plugin->shouldLoad($panel->getId())) {
-                    continue;
-                }
-
-                $pluginClass = $plugin->class;
-
-                try {
-                    $panel->plugin($pluginClass::make());
-                } catch (Exception $exception) {
-                    logger()->error('Error loading plugin ' . $plugin->name . ': ' . $exception->getMessage());
-                }
-            }
-        }
+        $this->loadPanelPlugins($panel);
 
         return $panel;
     }
