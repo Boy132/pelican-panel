@@ -8,6 +8,7 @@ namespace App\Models;
  * @property string $name
  * @property string $panel
  * @property string $category
+ * @property bool $enabled
  */
 class Plugin extends Model
 {
@@ -29,7 +30,15 @@ class Plugin extends Model
         'name' => 'required|string',
         'panel' => 'required|string|in:admin,app',
         'category' => 'required|string|in:plugin,theme,language',
+        'enabled' => 'boolean',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'enabled' => 'boolean',
+        ];
+    }
 
     public function getRouteKeyName(): string
     {

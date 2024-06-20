@@ -14,7 +14,7 @@ class InstallPlugins extends Command
 
     public function handle()
     {
-        $pluginPackages = Plugin::query()->select('package')->pluck('package')->toArray();
+        $pluginPackages = Plugin::query()->where('enabled', true)->select('package')->pluck('package')->toArray();
 
         /** @var Composer $composer */
         $composer = app(Composer::class);

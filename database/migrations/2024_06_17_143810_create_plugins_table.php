@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('panel');
             $table->string('category');
+            $table->boolean('enabled');
             $table->timestamps();
         });
     }

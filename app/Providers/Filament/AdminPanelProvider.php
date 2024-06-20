@@ -83,17 +83,17 @@ class AdminPanelProvider extends PanelProvider
 
         // Don't load any plugins during tests
         if (config('app.env') !== 'testing') {
-            $plugins = Plugin::query()->where('panel', $panel->getId())->get();
+            $plugins = Plugin::query()->where('panel', $panel->getId())->where('enabled', true)->get();
             /** @var Plugin $plugin */
             foreach ($plugins as $plugin) {
                 $pluginClass = $plugin->class;
-                
+
                 try {
                     $panel->plugin($pluginClass::make());
                 } catch (Exception $exception) {
-                    logger()->error('Error loading plugin ' . $plugin->package . ': ' . $exception->getMessage());
+                    logger()->error('Error loading plugin ' . $plugin->name . ': ' . $exception->getMessage());
                 }
-                
+
             }
         }
 
