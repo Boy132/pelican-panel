@@ -27,7 +27,7 @@ trait PluginLoaderTrait
                 $pluginClass = $plugin->class;
 
                 if (!class_exists($pluginClass)) {
-                    throw new Exception('Class "' . $plugin . '" not found');
+                    throw new Exception('Class "' . $pluginClass . '" not found');
                 }
 
                 $panel->plugin($pluginClass::make());
