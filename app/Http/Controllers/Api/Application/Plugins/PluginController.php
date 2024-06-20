@@ -11,10 +11,19 @@ use App\Http\Requests\Api\Application\Plugins\GetPluginRequest;
 use App\Http\Requests\Api\Application\Plugins\StorePluginRequest;
 use App\Http\Requests\Api\Application\Plugins\DeletePluginRequest;
 use App\Http\Requests\Api\Application\Plugins\UpdatePluginRequest;
-use Illuminate\Support\Composer;
+use App\Services\Servers\PluginInstallService;
 
 class PluginController extends ApplicationApiController
 {
+    /**
+     * PluginController constructor.
+     */
+    public function __construct(
+        private PluginInstallService $pluginInstallService
+    ) {
+        parent::__construct();
+    }
+
     /**
      * Return all the plugins that are currently installed.
      */
@@ -47,14 +56,7 @@ class PluginController extends ApplicationApiController
      */
     public function store(StorePluginRequest $request): JsonResponse
     {
-        $model = (new Plugin())->fill($request->validated());
-        $model->saveOrFail();
-
-        $plugin = $model->fresh();
-
-        /** @var Composer $composer */
-        $composer = app(Composer::class);
-        $composer->requirePackages([$plugin->package]);
+        $plugin = $this->pluginInstallService->install($request->validated());
 
         return $this->fractal->item($plugin)
             ->transformWith($this->getTransformer(PluginTransformer::class))
@@ -85,11 +87,7 @@ class PluginController extends ApplicationApiController
      */
     public function delete(DeletePluginRequest $request, Plugin $plugin): JsonResponse
     {
-        /** @var Composer $composer */
-        $composer = app(Composer::class);
-        $composer->removePackages([$plugin->package]);
-
-        $plugin->delete();
+        $this->pluginInstallService->uninstall($plugin);
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PluginResource\Pages;
 use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use App\Filament\Resources\PluginResource;
+use App\Services\Servers\PluginInstallService;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
@@ -66,16 +67,24 @@ class ListPlugins extends ListRecords
             ->emptyStateDescription('')
             ->emptyStateHeading('No Plugins')
             ->emptyStateActions([
-                Tables\Actions\Action::make('install') // TODO
-                    ->label('Install Plugin'),
+                Tables\Actions\Action::make('install')
+                    ->label('Install Plugin')
+                    ->form(fn () => [
+                        // TODO
+                    ])
+                    ->action(fn (array $data) => resolve(PluginInstallService::class)->install($data)),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('install') // TODO
-                ->label('Install Plugin'),
+            Actions\Action::make('install')
+                ->label('Install Plugin')
+                ->form(fn () => [
+                    // TODO
+                ])
+                ->action(fn (array $data) => resolve(PluginInstallService::class)->install($data)),
         ];
     }
 }
