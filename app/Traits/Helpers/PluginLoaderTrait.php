@@ -34,10 +34,9 @@ trait PluginLoaderTrait
 
                 $plugin->status = PluginStatus::Enabled;
             } catch (Exception $exception) {
-                // Loading plugin failed or plugin class doesn't exist
-                logger()->error('Error loading plugin ' . $plugin->name . ': ' . $exception->getMessage());
-
                 $plugin->status = PluginStatus::Errored;
+
+                report($exception);
             }
 
             $plugin->save();

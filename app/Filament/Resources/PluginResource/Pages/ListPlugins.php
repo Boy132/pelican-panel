@@ -6,8 +6,10 @@ use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use App\Filament\Resources\PluginResource;
 use App\Services\Plugins\PluginInstallService;
+use Exception;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
@@ -63,7 +65,7 @@ class ListPlugins extends ListRecords
                             ->title('Plugin disabled')
                             ->send();
                     }),
-                    Tables\Actions\Action::make('uninstall')
+                Tables\Actions\Action::make('uninstall')
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(fn (Plugin $record) => resolve(PluginInstallService::class)->uninstall($record)),
@@ -75,7 +77,7 @@ class ListPlugins extends ListRecords
                 Tables\Actions\Action::make('install')
                     ->label('Install Plugin')
                     ->form(fn () => $this->installForm())
-                    ->action(fn (array $data) => resolve(PluginInstallService::class)->install($data)),
+                    ->action(fn (array $data) => $this->installAction($data)),
             ]);
     }
 
@@ -85,43 +87,97 @@ class ListPlugins extends ListRecords
             Actions\Action::make('install')
                 ->label('Install Plugin')
                 ->form(fn () => $this->installForm())
-                ->action(fn (array $data) => resolve(PluginInstallService::class)->install($data)),
+                ->action(fn (array $data) => $this->installAction($data)),
         ];
+    }
+
+    private function installAction(array $data): void
+    {
+        /** @var PluginInstallService $installService */
+        $installService = resolve(PluginInstallService::class);
+
+        try {
+            // Install via json url
+            if (!empty($data['url'])) {
+                $url = $data['url'];
+                $json = json_decode(file_get_contents($url), true, 512, JSON_THROW_ON_ERROR);
+                $installService->install($json);
+
+                return;
+            }
+
+            // Install via json file
+            if (!empty($data['file'])) {
+                $file = $data['file'];
+                $fileData = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
+                $installService->install($fileData);
+
+                return;
+            }
+
+            // Install via manual input
+            unset($data['url']);
+            unset($data['file']);
+            $installService->install($data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Install Failed')
+                ->danger()
+                ->send();
+
+            report($exception);
+        }
     }
 
     private function installForm(): array
     {
-        // TOOD
         return [
-            Forms\Components\TextInput::make('package')
-                ->required(),
-            Forms\Components\TextInput::make('class')
-                ->required(),
-            Forms\Components\Select::make('status')
-                ->required()
-                ->hidden()
-                ->options(PluginStatus::class)
-                ->default(PluginStatus::Enabled),
-            Forms\Components\TextInput::make('name')
-                ->required(),
-            Forms\Components\TextInput::make('description')
-                ->required(),
-            Forms\Components\TextInput::make('author')
-                ->required(),
-            Forms\Components\Select::make('panel')
-                ->required()
-                ->options([
-                    'admin' => 'Admin',
-                    'app' => 'Client',
-                    'both' => 'Admin & Client',
-                ]),
-            Forms\Components\Select::make('category')
-                ->required()
-                ->options([
-                    'plugin' => 'Plugin',
-                    'theme' => 'Theme',
-                    'language' => 'Language',
-                ]),
+            Tabs::make('Tabs')
+                ->tabs([
+                    Tabs\Tab::make('URL')
+                        ->icon('tabler-world-upload')
+                        ->schema([
+                            Forms\Components\TextInput::make('url')
+                                ->label('Json URL')
+                                ->hint('This URL should point to a single json file that contains the plugin info.')
+                                ->url(),
+                        ]),
+                    Tabs\Tab::make('File')
+                        ->icon('tabler-file-upload')
+                        ->schema([
+                            Forms\Components\FileUpload::make('file')
+                                ->label('Json File')
+                                ->hint('This should be a single json file that contains the plugin info.')
+                                ->acceptedFileTypes(['application/json'])
+                                ->storeFiles(false),
+                        ]),
+                    Tabs\Tab::make('Manual')
+                        ->icon('tabler-clipboard-list')
+                        ->schema([
+                            Forms\Components\TextInput::make('package'),
+                            Forms\Components\TextInput::make('class'),
+                            Forms\Components\Select::make('status')
+                                ->hidden()
+                                ->options(PluginStatus::class)
+                                ->default(PluginStatus::Enabled),
+                            Forms\Components\TextInput::make('name'),
+                            Forms\Components\TextInput::make('description'),
+                            Forms\Components\TextInput::make('author'),
+                            Forms\Components\Select::make('panel')
+                                ->options([
+                                    'admin' => 'Admin',
+                                    'app' => 'Client',
+                                    'both' => 'Admin & Client',
+                                ]),
+                            Forms\Components\Select::make('category')
+                                ->options([
+                                    'plugin' => 'Plugin',
+                                    'theme' => 'Theme',
+                                    'language' => 'Language',
+                                ]),
+                        ]),
+                ])
+                ->contained(false),
         ];
     }
 }
