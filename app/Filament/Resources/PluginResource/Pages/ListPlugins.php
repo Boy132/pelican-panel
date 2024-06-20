@@ -23,7 +23,7 @@ class ListPlugins extends ListRecords
             ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->description(fn (Plugin $record): ?string => (strlen($record->description) > 80) ? substr($record->description, 0, 80).'...' : $record->description)
+                    ->description(fn (Plugin $record): ?string => (strlen($record->description) > 60) ? substr($record->description, 0, 60).'...' : $record->description)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
                     ->searchable(),
@@ -63,6 +63,10 @@ class ListPlugins extends ListRecords
                             ->title('Plugin disabled')
                             ->send();
                     }),
+                    Tables\Actions\Action::make('uninstall')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(fn (Plugin $record) => resolve(PluginInstallService::class)->uninstall($record)),
             ])
             ->emptyStateIcon('tabler-packages')
             ->emptyStateDescription('')
