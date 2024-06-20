@@ -9,6 +9,8 @@ use App\Enums\PluginStatus;
  * @property string $class
  * @property PluginStatus $status
  * @property string $name
+ * @property string $description
+ * @property string $author
  * @property string $panel
  * @property string $category
  */
@@ -23,7 +25,7 @@ class Plugin extends Model
     protected $table = 'plugins';
 
     protected $fillable = [
-        'package', 'class', 'name', 'panel', 'category',
+        'package', 'class', 'name', 'description', 'author', 'panel', 'category',
     ];
 
     public static array $validationRules = [
@@ -31,6 +33,8 @@ class Plugin extends Model
         'class' => 'required|string',
         'status' => 'string',
         'name' => 'required|string',
+        'description' => 'required|string',
+        'author' => 'required|string',
         'panel' => 'required|string|in:admin,app,both',
         'category' => 'required|string|in:plugin,theme,language',
     ];

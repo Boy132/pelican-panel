@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('class');
             $table->string('status')->default('enabled');
             $table->string('name');
+            $table->string('description');
+            $table->string('author');
             $table->string('panel');
             $table->string('category');
             $table->timestamps();

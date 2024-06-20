@@ -21,6 +21,9 @@ class ListPlugins extends ListRecords
             ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->description(fn ($record): ?string => (strlen($record->description) > 80) ? substr($record->description, 0, 80).'...' : $record->description)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('panel')
                     ->searchable(),
@@ -33,6 +36,7 @@ class ListPlugins extends ListRecords
             ])
             ->actions([
                 Tables\Actions\Action::make('enable')
+                    ->color('success')
                     ->hidden(fn (Plugin $record) => !$record->isDisabled())
                     ->action(function (Plugin $record) {
                         $record->status = PluginStatus::Enabled;
@@ -44,6 +48,7 @@ class ListPlugins extends ListRecords
                             ->send();
                     }),
                 Tables\Actions\Action::make('disable')
+                    ->color('danger')
                     ->hidden(fn (Plugin $record) => $record->isDisabled())
                     ->action(function (Plugin $record) {
                         $record->status = PluginStatus::Disabled;
