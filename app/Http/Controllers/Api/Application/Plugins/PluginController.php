@@ -21,8 +21,8 @@ class PluginController extends ApplicationApiController
     public function index(GetPluginRequest $request): array
     {
         $plugins = QueryBuilder::for(Plugin::query())
-            ->allowedFilters(['package', 'name', 'panel', 'category'])
-            ->allowedSorts(['package', 'name', 'panel', 'category'])
+            ->allowedFilters(['package', 'status', 'name', 'panel', 'category'])
+            ->allowedSorts(['package', 'status', 'name', 'panel', 'category'])
             ->paginate($request->query('per_page') ?? 50);
 
         return $this->fractal->collection($plugins)
