@@ -25,6 +25,7 @@ class InstallPluginsCommand extends Command
 
         /** @var Composer $composer */
         $composer = app(Composer::class);
+        $composer->setWorkingPath(base_path());
         $composer->requirePackages($pluginPackages, false, $this->output);
     }
 }

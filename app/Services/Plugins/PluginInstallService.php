@@ -17,6 +17,7 @@ class PluginInstallService
 
         /** @var Composer $composer */
         $composer = app(Composer::class);
+        $composer->setWorkingPath(base_path());
         $composer->requirePackages([$plugin->package]);
 
         return $plugin;
@@ -33,6 +34,7 @@ class PluginInstallService
 
         /** @var Composer $composer */
         $composer = app(Composer::class);
+        $composer->setWorkingPath(base_path());
         $composer->removePackages([$plugin->package]);
 
         $plugin->delete();
