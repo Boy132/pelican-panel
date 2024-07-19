@@ -9,9 +9,9 @@ use Illuminate\Console\Command;
 
 class InstallPluginCommand extends Command
 {
-    protected $signature = 'p:plugin:install {name}';
+    protected $signature = 'p:plugin:install {plugin}';
 
-    protected $description = 'Installs a plugin';
+    protected $description = 'Install a plugin';
 
     public function __construct(private Client $client)
     {
@@ -21,11 +21,11 @@ class InstallPluginCommand extends Command
     public function handle(): void
     {
         try {
-            $packageName = $this->argument('name');
+            $plugin = $this->argument('plugin');
 
             /** @var PluginInstallService $installService */
             $installService = resolve(PluginInstallService::class);
-            $plugin = $installService->installFromUrl("https://raw.githubusercontent.com/{$packageName}/main/install.json");
+            $plugin = $installService->installFromUrl(filter_var($plugin, FILTER_VALIDATE_URL) ? $plugin : "https://raw.githubusercontent.com/{$plugin}/main/install.json");
 
             $this->info("Plugin '{$plugin->name}' was installed successfully.");
         } catch (Exception $exception) {

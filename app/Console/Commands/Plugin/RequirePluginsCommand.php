@@ -11,14 +11,14 @@ class RequirePluginsCommand extends Command
 {
     protected $signature = 'p:plugin:require';
 
-    protected $description = 'Installs all plugin packages via composer require';
+    protected $description = 'Install all plugin packages via composer require';
 
     public function handle(): void
     {
         $pluginPackages = Plugin::query()->whereNot('status', PluginStatus::Disabled)->select('package')->pluck('package')->toArray();
 
         if (count($pluginPackages) < 1) {
-            $this->line('No plugins installed');
+            $this->warn('No plugins installed');
 
             return;
         }
