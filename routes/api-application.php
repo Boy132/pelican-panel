@@ -141,3 +141,22 @@ Route::prefix('mounts')->group(function () {
     Route::delete('/{mount:id}/eggs/{egg_id}', [Application\Mounts\MountController::class, 'deleteEgg']);
     Route::delete('/{mount:id}/nodes/{node_id}', [Application\Mounts\MountController::class, 'deleteNode']);
 });
+
+/*
+|--------------------------------------------------------------------------
+| Plugin Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/plugins
+|
+*/
+Route::prefix('plugins')->group(function () {
+    Route::get('/', [Application\Plugins\PluginController::class, 'index'])->name('api.application.plugins');
+    Route::get('/{plugin:package}', [Application\Plugins\PluginController::class, 'view'])->name('api.application.plugins.view');
+
+    Route::post('/', [Application\Plugins\PluginController::class, 'store']);
+
+    Route::patch('/{plugin:package}', [Application\Plugins\PluginController::class, 'update']);
+
+    Route::delete('/{plugin:package}', [Application\Plugins\PluginController::class, 'delete']);
+});
