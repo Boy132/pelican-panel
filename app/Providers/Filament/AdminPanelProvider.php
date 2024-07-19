@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
+use App\Traits\Helpers\PluginLoaderTrait;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -21,6 +22,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+    use PluginLoaderTrait;
+
     public function boot()
     {
         FilamentAsset::registerCssVariables([
@@ -30,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel
             ->default()
             ->id('admin')
             ->path('admin')
@@ -69,5 +72,9 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        $this->loadPanelPlugins($panel);
+
+        return $panel;
     }
 }
