@@ -3,6 +3,8 @@
 namespace App\Services\Plugins;
 
 use App\Models\Plugin;
+use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Support\Composer;
 
 class PluginInstallService
@@ -22,6 +24,30 @@ class PluginInstallService
         $composer->requirePackages([$plugin->package]);
 
         return $plugin;
+    }
+
+    /**
+     * Install a new plugin from an URL.
+     * This will also require the composer package of the plugin.
+     */
+    public function installFromUrl(string $url): Plugin
+    {
+        $client = new Client();
+
+        $response = $client->request('GET', $url,
+            [
+                'timeout' => config('panel.guzzle.timeout'),
+                'connect_timeout' => config('panel.guzzle.connect_timeout'),
+            ]
+        );
+
+        if ($response->getStatusCode() === 200) {
+            $data = json_decode($response->getBody(), true);
+
+            return $this->install($data);
+        }
+
+        throw new Exception("{$response->getStatusCode()}: {$response->getReasonPhrase()}");
     }
 
     /**

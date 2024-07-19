@@ -20,21 +20,14 @@ class InstallPluginCommand extends Command
 
     public function handle(): void
     {
-        /** @var PluginInstallService $installService */
-        $installService = resolve(PluginInstallService::class);
-
-        $packageName = $this->argument('name');
-
         try {
-            $response = $this->client->request('GET', "https://raw.githubusercontent.com/{$packageName}/main/install.json");
-            if ($response->getStatusCode() === 200) {
-                $data = json_decode($response->getBody(), true);
-                $plugin = $installService->install($data);
+            $packageName = $this->argument('name');
 
-                $this->info("Plugin '{$plugin->name}' was installed successfully.");
-            } else {
-                $this->error("Could not install plugin: {$response->getStatusCode()} {$response->getReasonPhrase()}");
-            }
+            /** @var PluginInstallService $installService */
+            $installService = resolve(PluginInstallService::class);
+            $plugin = $installService->installFromUrl("https://raw.githubusercontent.com/{$packageName}/main/install.json");
+
+            $this->info("Plugin '{$plugin->name}' was installed successfully.");
         } catch (Exception $exception) {
             $this->error('Could not install plugin: ' . $exception->getMessage());
         }
