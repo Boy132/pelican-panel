@@ -103,12 +103,16 @@ class Plugin extends Model
         return cache()->remember("plugin:{$this->package}:update_data", now()->addMinutes(5), function () {
             try {
                 $client = new Client();
-                $response = $client->request('GET', $this->update_url);
+                $response = $client->request('GET', $this->update_url,
+                    [
+                        'timeout' => config('panel.guzzle.timeout'),
+                        'connect_timeout' => config('panel.guzzle.connect_timeout'),
+                    ]
+                );
                 if ($response->getStatusCode() === 200) {
                     return json_decode($response->getBody(), true);
                 }
-            } catch (Exception $e) {
-                return [];
+            } catch (Exception) {
             }
 
             return [];

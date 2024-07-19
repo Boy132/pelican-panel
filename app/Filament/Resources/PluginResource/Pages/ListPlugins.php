@@ -14,7 +14,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
-use GuzzleHttp\Client;
 
 class ListPlugins extends ListRecords
 {
@@ -113,18 +112,12 @@ class ListPlugins extends ListRecords
 
     private function installAction(array $data): void
     {
+        $url = !empty($data['url']) ? $data['url'] : "https://raw.githubusercontent.com/{$data['name']}/main/install.json";
+
         try {
-            $client = new Client();
-            $response = $client->request('GET', !empty($data['url']) ? $data['url'] : "https://raw.githubusercontent.com/{$data['name']}/main/install.json");
-            if ($response->getStatusCode() === 200) {
-                $data = json_decode($response->getBody(), true);
-                resolve(PluginInstallService::class)->install($data);
-            } else {
-                Notification::make()
-                    ->title('Install Failed')
-                    ->danger()
-                    ->send();
-            }
+            /** @var PluginInstallService $installService */
+            $installService = resolve(PluginInstallService::class);
+            $installService->installFromUrl($url);
         } catch (Exception $exception) {
             Notification::make()
                 ->title('Install Failed')
