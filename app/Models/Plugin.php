@@ -95,7 +95,7 @@ class Plugin extends Model
     {
         $updateData = $this->getUpdateData();
 
-        return $updateData ? $updateData['version'] === $this->version : false;
+        return $updateData && $updateData['version'] === $this->version;
     }
 
     public function getUpdateData(): array
@@ -110,7 +110,7 @@ class Plugin extends Model
                     ]
                 );
                 if ($response->getStatusCode() === 200) {
-                    return json_decode($response->getBody(), true);
+                    return json_decode($response->getBody(), true) ?? [];
                 }
             } catch (Exception) {
             }
