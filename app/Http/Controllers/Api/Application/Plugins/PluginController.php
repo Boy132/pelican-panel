@@ -12,6 +12,7 @@ use App\Http\Requests\Api\Application\Plugins\StorePluginRequest;
 use App\Http\Requests\Api\Application\Plugins\DeletePluginRequest;
 use App\Http\Requests\Api\Application\Plugins\UpdatePluginRequest;
 use App\Services\Plugins\PluginInstallService;
+use App\Services\Plugins\PluginStatusService;
 
 class PluginController extends ApplicationApiController
 {
@@ -19,7 +20,8 @@ class PluginController extends ApplicationApiController
      * PluginController constructor.
      */
     public function __construct(
-        private PluginInstallService $pluginInstallService
+        private PluginInstallService $pluginInstallService,
+        private PluginStatusService $pluginStatusService
     ) {
         parent::__construct();
     }
@@ -90,5 +92,29 @@ class PluginController extends ApplicationApiController
         $this->pluginInstallService->uninstall($plugin);
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Enable a plugin.
+     */
+    public function enable(StorePluginRequest $request, Plugin $plugin): array
+    {
+        $this->pluginStatusService->enable($plugin);
+
+        return $this->fractal->item($plugin)
+            ->transformWith($this->getTransformer(PluginTransformer::class))
+            ->toArray();
+    }
+
+    /**
+     * Disable a plugin.
+     */
+    public function disable(StorePluginRequest $request, Plugin $plugin): array
+    {
+        $this->pluginStatusService->disable($plugin);
+
+        return $this->fractal->item($plugin)
+            ->transformWith($this->getTransformer(PluginTransformer::class))
+            ->toArray();
     }
 }

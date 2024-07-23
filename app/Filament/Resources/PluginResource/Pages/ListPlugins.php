@@ -6,6 +6,7 @@ use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use App\Filament\Resources\PluginResource;
 use App\Services\Plugins\PluginInstallService;
+use App\Services\Plugins\PluginStatusService;
 use Exception;
 use Filament\Actions;
 use Filament\Forms\Components\Tabs;
@@ -68,9 +69,7 @@ class ListPlugins extends ListRecords
                         ->color('success')
                         ->hidden(fn (Plugin $record) => !$record->isDisabled())
                         ->action(function (Plugin $record) {
-                            $record->status = PluginStatus::Enabled;
-                            $record->status_message = null;
-                            $record->save();
+                            resolve(PluginStatusService::class)->enable($record);
 
                             Notification::make()
                                 ->success()
@@ -82,9 +81,7 @@ class ListPlugins extends ListRecords
                         ->color('danger')
                         ->hidden(fn (Plugin $record) => $record->isDisabled())
                         ->action(function (Plugin $record) {
-                            $record->status = PluginStatus::Disabled;
-                            $record->status_message = null;
-                            $record->save();
+                            resolve(PluginStatusService::class)->disable($record);
 
                             Notification::make()
                                 ->success()
