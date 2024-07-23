@@ -157,6 +157,8 @@ Route::prefix('plugins')->group(function () {
     Route::post('/', [Application\Plugins\PluginController::class, 'store']);
 
     Route::patch('/{plugin:package}', [Application\Plugins\PluginController::class, 'update']);
+    Route::patch('/{plugin:package}/enable', [Application\Plugins\PluginController::class, 'enable']);
+    Route::patch('/{plugin:package}/disable', [Application\Plugins\PluginController::class, 'disable']);
 
     Route::delete('/{plugin:package}', [Application\Plugins\PluginController::class, 'delete']);
 });
