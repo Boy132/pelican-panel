@@ -47,6 +47,7 @@ class ListPlugins extends ListRecords
                 TextColumn::make('status')
                     ->icon(fn (PluginStatus $state) => $state->icon())
                     ->iconColor(fn (PluginStatus $state) => $state->color())
+                    ->tooltip(fn (Plugin $record): ?string => $record->status_message)
                     ->sortable(),
             ])
             ->actions([
@@ -68,6 +69,7 @@ class ListPlugins extends ListRecords
                         ->hidden(fn (Plugin $record) => !$record->isDisabled())
                         ->action(function (Plugin $record) {
                             $record->status = PluginStatus::Enabled;
+                            $record->status_message = null;
                             $record->save();
 
                             Notification::make()
@@ -81,6 +83,7 @@ class ListPlugins extends ListRecords
                         ->hidden(fn (Plugin $record) => $record->isDisabled())
                         ->action(function (Plugin $record) {
                             $record->status = PluginStatus::Disabled;
+                            $record->status_message = null;
                             $record->save();
 
                             Notification::make()
