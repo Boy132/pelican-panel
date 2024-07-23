@@ -13,9 +13,9 @@ enum PluginStatus: string implements HasLabel
     public function icon(): string
     {
         return match ($this) {
-            self::Disabled => 'tabler-circle-off',
-            self::Enabled => 'tabler-circle-check',
-            self::Errored => 'tabler-circle-x',
+            self::Disabled => 'tabler-heart-off',
+            self::Enabled => 'tabler-heart-check',
+            self::Errored => 'tabler-heart-x',
         };
     }
 
