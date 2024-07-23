@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
  * @property string $package
  * @property string $class
  * @property PluginStatus $status
+ * @property string|null status_message
  * @property string $name
  * @property string|null $description
  * @property string $author
@@ -37,6 +38,7 @@ class Plugin extends Model
         'package' => 'required|string',
         'class' => 'required|string',
         'status' => 'string',
+        'status_message' => 'nullable|string',
         'name' => 'required|string',
         'description' => 'nullable|string',
         'author' => 'required|string',

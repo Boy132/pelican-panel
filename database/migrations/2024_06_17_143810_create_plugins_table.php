@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('package')->unique();
             $table->string('class');
             $table->string('status')->default('enabled');
+            $table->string('status_message')->nullable();
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('author');

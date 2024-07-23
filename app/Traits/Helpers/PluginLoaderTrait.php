@@ -39,8 +39,10 @@ trait PluginLoaderTrait
                 $panel->plugin($pluginClass::make());
 
                 $plugin->status = PluginStatus::Enabled;
+                $plugin->status_message = null;
             } catch (Exception $exception) {
                 $plugin->status = PluginStatus::Errored;
+                $plugin->status_message = $exception->getMessage();
 
                 report($exception);
             }
