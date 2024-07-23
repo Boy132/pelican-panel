@@ -53,7 +53,15 @@ class ListPlugins extends ListRecords
                 ActionGroup::make([
                     Action::make('view')
                         ->icon('tabler-eye-share')
+                        ->color('primary')
                         ->url(fn (Plugin $record): string => 'https://github.com/' . $record->package, true),
+                    Action::make('settings')
+                        ->icon('tabler-settings')
+                        ->color('primary')
+                        ->visible(fn (Plugin $record) => !$record->isDisabled() && $record->hasSettings())
+                        ->form(fn (Plugin $record) => $record->getSettingsForm())
+                        ->action(fn (array $data, Plugin $record) => $record->saveSettings($data))
+                        ->slideOver(),
                     Action::make('enable')
                         ->icon('tabler-check')
                         ->color('success')
@@ -83,7 +91,7 @@ class ListPlugins extends ListRecords
                     Action::make('update')
                         ->icon('tabler-download')
                         ->color('primary')
-                        ->hidden(fn (Plugin $record) => !$record->isUpdateAvailable())
+                        ->visible(fn (Plugin $record) => $record->isUpdateAvailable())
                         ->action(fn (Plugin $record) => resolve(PluginInstallService::class)->update($record)),
                     Action::make('uninstall')
                         ->icon('tabler-trash')

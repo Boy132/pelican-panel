@@ -118,4 +118,39 @@ class Plugin extends Model
             return [];
         });
     }
+
+    public function hasSettings(): bool
+    {
+        if (method_exists($this->class, 'get')) {
+            $pluginObject = ($this->class)::get();
+
+            return method_exists($pluginObject, 'getSettingsForm') && method_exists($pluginObject, 'saveSettings');
+        }
+
+        return false;
+    }
+
+    public function getSettingsForm(): array
+    {
+        if (method_exists($this->class, 'get')) {
+            $pluginObject = ($this->class)::get();
+
+            if (method_exists($pluginObject, 'getSettingsForm')) {
+                return $pluginObject->getSettingsForm();
+            }
+        }
+
+        return [];
+    }
+
+    public function saveSettings(array $data): void
+    {
+        if (method_exists($this->class, 'get')) {
+            $pluginObject = ($this->class)::get();
+
+            if (method_exists($pluginObject, 'saveSettings')) {
+                $pluginObject->saveSettings($data);
+            }
+        }
+    }
 }
