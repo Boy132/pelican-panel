@@ -180,4 +180,7 @@ return [
 
     // A github token used for api requests. Not required but if set allows higher ratelimits and access to private repos.
     'github_token' => '',
+
+    // Custom github repos that should be discovered by the egg installer, e.g. ["my-repo/custom-eggs", "my-repo/super-custom-eggs"]
+    'egg_repos' => [],
 ];

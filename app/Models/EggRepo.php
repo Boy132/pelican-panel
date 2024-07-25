@@ -40,6 +40,14 @@ class EggRepo extends Model
             ];
         }
 
+        $customRepos = config('panel.egg_repos', []);
+        foreach ($customRepos as $repo) {
+            $repos[] = [
+                'name' => $repo,
+                'eggs' => $this->discoverRepo($repo),
+            ];
+        }
+
         return $repos;
     }
 
