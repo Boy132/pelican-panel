@@ -16,50 +16,31 @@ class EggRepo extends Model
 {
     use Sushi;
 
+    public const OFFICIAL_REPOS = [
+        'pelican-eggs/minecraft',
+        'pelican-eggs/games-steamcmd',
+        'pelican-eggs/games-standalone',
+        'pelican-eggs/database',
+        'pelican-eggs/software',
+        'pelican-eggs/storage',
+        'pelican-eggs/generic',
+        'pelican-eggs/chatbots',
+        'pelican-eggs/monitoring',
+        'pelican-eggs/voice',
+    ];
+
     public function getRows()
     {
-        return [
-            [
-                'name' => 'minecraft',
-                'eggs' => $this->discoverRepo('minecraft'),
-            ],
-            [
-                'name' => 'games-steamcmd',
-                'eggs' => $this->discoverRepo('games-steamcmd'),
-            ],
-            [
-                'name' => 'games-standalone',
-                'eggs' => $this->discoverRepo('games-standalone'),
-            ],
-            [
-                'name' => 'database',
-                'eggs' => $this->discoverRepo('database'),
-            ],
-            [
-                'name' => 'software',
-                'eggs' => $this->discoverRepo('software'),
-            ],
-            [
-                'name' => 'storage',
-                'eggs' => $this->discoverRepo('storage'),
-            ],
-            [
-                'name' => 'generic',
-                'eggs' => $this->discoverRepo('generic'),
-            ],
-            [
-                'name' => 'chatbots',
-                'eggs' => $this->discoverRepo('chatbots'),
-            ],
-            [
-                'name' => 'monitoring',
-                'eggs' => $this->discoverRepo('monitoring'),
-            ],
-            [
-                'name' => 'voice',
-                'eggs' => $this->discoverRepo('voice'),
-            ],
-        ];
+        $repos = [];
+
+        foreach (self::OFFICIAL_REPOS as $repo) {
+            $repos[] = [
+                'name' => $repo,
+                'eggs' => $this->discoverRepo($repo),
+            ];
+        }
+
+        return $repos;
     }
 
     protected function afterMigrate(Blueprint $table)
@@ -76,13 +57,19 @@ class EggRepo extends Model
     {
         $foundEggs = [];
 
-        try {
-            $client = new Client();
+        $client = new Client();
 
-            $response = $client->request('GET', 'https://api.github.com/repos/pelican-eggs/' . $repo . '/contents/' . $dir,
+        $headers = ['User-Agent' => config('app.name') . ' Panel'];
+        if (!empty(config('panel.github_token'))) {
+            $headers['Authorization'] = 'Bearer ' . config('panel.github_token');
+        }
+
+        try {
+            $response = $client->request('GET', 'https://api.github.com/repos/' . $repo . '/contents/' . $dir,
                 [
                     'timeout' => config('panel.guzzle.timeout'),
                     'connect_timeout' => config('panel.guzzle.connect_timeout'),
+                    'headers' => $headers,
                 ]
             );
             if ($response->getStatusCode() === 200) {

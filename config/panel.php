@@ -177,4 +177,7 @@ return [
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
+
+    // A github token used for api requests. Not required but if set allows higher ratelimits and access to private repos.
+    'github_token' => '',
 ];
