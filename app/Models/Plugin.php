@@ -60,11 +60,6 @@ class Plugin extends Model
         ];
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'package';
-    }
-
     public function shouldLoad(string $panelId): bool
     {
         return !$this->isDisabled() && ($this->panel === 'both' || $this->panel === $panelId);
@@ -102,7 +97,7 @@ class Plugin extends Model
 
     public function getUpdateData(): array
     {
-        return cache()->remember("plugin:{$this->package}:update_data", now()->addMinutes(5), function () {
+        return cache()->remember("plugin:{$this->package}:update_data", now()->addMinutes(30), function () {
             try {
                 $client = new Client();
                 $response = $client->request('GET', $this->update_url,
@@ -123,7 +118,7 @@ class Plugin extends Model
 
     public function hasSettings(): bool
     {
-        if (method_exists($this->class, 'get')) {
+        if (class_exists($this->class) && method_exists($this->class, 'get')) {
             $pluginObject = ($this->class)::get();
 
             return method_exists($pluginObject, 'getSettingsForm') && method_exists($pluginObject, 'saveSettings');
@@ -134,7 +129,7 @@ class Plugin extends Model
 
     public function getSettingsForm(): array
     {
-        if (method_exists($this->class, 'get')) {
+        if (class_exists($this->class) && method_exists($this->class, 'get')) {
             $pluginObject = ($this->class)::get();
 
             if (method_exists($pluginObject, 'getSettingsForm')) {
@@ -147,7 +142,7 @@ class Plugin extends Model
 
     public function saveSettings(array $data): void
     {
-        if (method_exists($this->class, 'get')) {
+        if (class_exists($this->class) && method_exists($this->class, 'get')) {
             $pluginObject = ($this->class)::get();
 
             if (method_exists($pluginObject, 'saveSettings')) {
