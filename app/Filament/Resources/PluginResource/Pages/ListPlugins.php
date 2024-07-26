@@ -27,23 +27,20 @@ class ListPlugins extends ListRecords
     {
         return $table
             ->searchable(false)
+            ->openRecordUrlInNewTab()
             ->columns([
                 TextColumn::make('name')
                     ->description(fn (Plugin $record): ?string => (strlen($record->description) > 60) ? substr($record->description, 0, 60).'...' : $record->description)
                     ->icon(fn (Plugin $record): string => $record->isCompatible() ? 'tabler-versions' : 'tabler-versions-off')
                     ->iconColor(fn (Plugin $record): string => $record->isCompatible() ? 'success' : 'danger')
                     ->tooltip(fn (Plugin $record): ?string => !$record->isCompatible() ? 'This Plugin is only compatible with Panel version ' . $record->panel_version . ' but you are using version!' : null)
-                    ->searchable()
                     ->sortable(),
                 TextColumn::make('author')
-                    ->searchable()
                     ->sortable(),
                 TextColumn::make('version')
-                    ->searchable()
                     ->sortable(),
                 TextColumn::make('category')
                     ->badge()
-                    ->searchable()
                     ->sortable(),
                 TextColumn::make('status')
                     ->icon(fn (PluginStatus $state) => $state->icon())
@@ -92,7 +89,14 @@ class ListPlugins extends ListRecords
                         ->icon('tabler-download')
                         ->color('primary')
                         ->visible(fn (Plugin $record) => $record->isUpdateAvailable())
-                        ->action(fn (Plugin $record) => resolve(PluginInstallService::class)->update($record)),
+                        ->action(function (Plugin $record) {
+                            resolve(PluginInstallService::class)->update($record);
+
+                            Notification::make()
+                                ->success()
+                                ->title('Plugin updated')
+                                ->send();
+                        }),
                     Action::make('uninstall')
                         ->icon('tabler-trash')
                         ->color('danger')
@@ -106,7 +110,7 @@ class ListPlugins extends ListRecords
             ->emptyStateActions([
                 Action::make('install')
                     ->label('Install Plugin')
-                    ->form(fn () => $this->installForm())
+                    ->form($this->installForm())
                     ->action(fn (array $data) => $this->installAction($data)),
             ]);
     }
@@ -116,7 +120,7 @@ class ListPlugins extends ListRecords
         return [
             Actions\Action::make('install')
                 ->label('Install Plugin')
-                ->form(fn () => $this->installForm())
+                ->form($this->installForm())
                 ->action(fn (array $data) => $this->installAction($data)),
         ];
     }
