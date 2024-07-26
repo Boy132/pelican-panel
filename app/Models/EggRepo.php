@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Str;
 use Sushi\Sushi;
 
 /**
@@ -13,6 +14,7 @@ use Sushi\Sushi;
  * @property string repo
  * @property string path
  * @property string download_url
+ * @property string readme
  */
 class EggRepo extends Model
 {
@@ -93,6 +95,7 @@ class EggRepo extends Model
                             'repo' => $repo,
                             'path' => str($data['path'])->before('/' . $data['name']),
                             'download_url' => $data['download_url'],
+                            'readme' => Str::markdown(file_get_contents('https://raw.githubusercontent.com/' . $repo . '/main/' . urlencode($dir) . '/README.md')),
                         ];
                     }
                 }

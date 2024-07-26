@@ -5,11 +5,13 @@ namespace App\Filament\Resources\EggRepoResource\Pages;
 use App\Filament\Resources\EggRepoResource;
 use App\Models\EggRepo;
 use App\Services\Eggs\Sharing\EggImporterService;
+use Filament\Forms\Components\Placeholder;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class ListEggRepos extends ListRecords
 {
@@ -35,6 +37,18 @@ class ListEggRepos extends ListRecords
                     ->multiple(),
             ])
             ->actions([
+                Action::make('readme')
+                    ->icon('tabler-book-2')
+                    ->label('Readme')
+                    ->color('success')
+                    ->hidden(fn (EggRepo $eggRepo) => !$eggRepo->readme || empty($eggRepo->readme))
+                    ->form([
+                        Placeholder::make('')
+                            ->content(fn (EggRepo $eggRepo) => new HtmlString($eggRepo->readme)),
+                    ])
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(false)
+                    ->slideOver(),
                 Action::make('import')
                     ->icon('tabler-download')
                     ->label('Import')
