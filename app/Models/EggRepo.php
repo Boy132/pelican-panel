@@ -10,7 +10,9 @@ use Sushi\Sushi;
 
 /**
  * @property string name
- * @property array $eggs
+ * @property string repo
+ * @property string path
+ * @property string download_url
  */
 class EggRepo extends Model
 {
@@ -29,38 +31,21 @@ class EggRepo extends Model
         'pelican-eggs/voice',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'eggs' => 'array',
-        ];
-    }
-
     public function getRows()
     {
-        $repos = [];
+        $eggs = [];
 
         foreach (self::OFFICIAL_REPOS as $repo) {
-            $repos[] = [
-                'name' => $repo,
-                'eggs' => json_encode($this->discoverRepo($repo)),
-            ];
+            $eggs = array_merge($eggs, $this->discoverRepo($repo));
         }
 
         $customRepos = config('panel.egg_repos', []);
-
-        if (is_string($customRepos)) {
-            $customRepos = explode(',', $customRepos);
-        }
-
+        $customRepos = is_string($customRepos) ? explode(',', $customRepos) : $customRepos;
         foreach ($customRepos as $repo) {
-            $repos[] = [
-                'name' => $repo,
-                'eggs' => json_encode($this->discoverRepo($repo)),
-            ];
+            $eggs = array_merge($eggs, $this->discoverRepo($repo));
         }
 
-        return $repos;
+        return $eggs;
     }
 
     protected function afterMigrate(Blueprint $table)
@@ -97,7 +82,7 @@ class EggRepo extends Model
 
                 foreach ($dirData as $data) {
                     if ($data['type'] === 'dir') {
-                        $foundEggs[] = $this->discoverDir($repo, $data['path']);
+                        $foundEggs = array_merge($foundEggs, $this->discoverDir($repo, $data['path']));
 
                         continue;
                     }
