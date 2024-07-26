@@ -68,6 +68,8 @@ class ListPlugins extends ListRecords
                         ->action(function (Plugin $record) {
                             resolve(PluginStatusService::class)->enable($record);
 
+                            $this->redirect($this->getUrl());
+
                             Notification::make()
                                 ->success()
                                 ->title('Plugin enabled')
@@ -80,6 +82,8 @@ class ListPlugins extends ListRecords
                         ->action(function (Plugin $record) {
                             resolve(PluginStatusService::class)->disable($record);
 
+                            $this->redirect($this->getUrl());
+
                             Notification::make()
                                 ->success()
                                 ->title('Plugin disabled')
@@ -91,6 +95,8 @@ class ListPlugins extends ListRecords
                         ->visible(fn (Plugin $record) => $record->isUpdateAvailable())
                         ->action(function (Plugin $record) {
                             resolve(PluginInstallService::class)->update($record);
+
+                            $this->redirect($this->getUrl());
 
                             Notification::make()
                                 ->success()
