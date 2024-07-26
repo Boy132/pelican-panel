@@ -92,7 +92,7 @@ class Plugin extends Model
     {
         $updateData = $this->getUpdateData();
 
-        return $updateData && $updateData['version'] === $this->version;
+        return $updateData && $updateData['version'] !== $this->version;
     }
 
     public function getUpdateData(): array
