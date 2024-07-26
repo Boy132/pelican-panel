@@ -29,6 +29,13 @@ class EggRepo extends Model
         'pelican-eggs/voice',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'eggs' => 'array',
+        ];
+    }
+
     public function getRows()
     {
         $repos = [];
@@ -36,15 +43,20 @@ class EggRepo extends Model
         foreach (self::OFFICIAL_REPOS as $repo) {
             $repos[] = [
                 'name' => $repo,
-                'eggs' => $this->discoverRepo($repo),
+                'eggs' => json_encode($this->discoverRepo($repo)),
             ];
         }
 
         $customRepos = config('panel.egg_repos', []);
+
+        if (is_string($customRepos)) {
+            $customRepos = explode(',', $customRepos);
+        }
+
         foreach ($customRepos as $repo) {
             $repos[] = [
                 'name' => $repo,
-                'eggs' => $this->discoverRepo($repo),
+                'eggs' => json_encode($this->discoverRepo($repo)),
             ];
         }
 
@@ -73,7 +85,7 @@ class EggRepo extends Model
         }
 
         try {
-            $response = $client->request('GET', 'https://api.github.com/repos/' . $repo . '/contents/' . $dir,
+            $response = $client->request('GET', 'https://api.github.com/repos/' . $repo . '/contents/' . urlencode($dir),
                 [
                     'timeout' => config('panel.guzzle.timeout'),
                     'connect_timeout' => config('panel.guzzle.connect_timeout'),
@@ -92,8 +104,9 @@ class EggRepo extends Model
 
                     if ($data['type'] === 'file' && starts_with($data['name'], 'egg-') && !starts_with($data['name'], 'egg-ptero') && ends_with($data['name'], '.json')) {
                         $foundEggs[] = [
-                            'name' => str($data['name'])->after('egg-')->headline(),
+                            'name' => str($data['name'])->after('egg-')->before('.json')->headline(),
                             'repo' => $repo,
+                            'path' => str($data['path'])->before('/' . $data['name']),
                             'download_url' => $data['download_url'],
                         ];
                     }
