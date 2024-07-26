@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Plugin;
 
-use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
@@ -15,7 +14,7 @@ class RequirePluginsCommand extends Command
 
     public function handle(): void
     {
-        $pluginPackages = Plugin::query()->whereNot('status', PluginStatus::Disabled)->select('package')->pluck('package')->toArray();
+        $pluginPackages = Plugin::query()->select('package')->pluck('package')->toArray();
 
         if (count($pluginPackages) < 1) {
             $this->warn('No plugins installed');
