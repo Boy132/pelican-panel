@@ -26,20 +26,21 @@ class TranslationKeyScanCommand extends Command
     public function handle(): void
     {
         $results = $this->scan([app_path(), resource_path()]);
-        $this->table(['File', 'Key'], $results);
+        $this->table(['File', 'Key', 'EN Translation'], $results);
     }
 
     public function scan(array $paths): array
     {
         $results = [];
 
-        foreach (collect(resolve(Filesystem::class)->allFiles($paths)) as $file) {
+        foreach (resolve(Filesystem::class)->allFiles($paths) as $file) {
             if (preg_match_all($this->pattern(), $file->getContents(), $matches)) {
                 foreach ($matches[2] as $key) {
                     if (!empty($key)) {
                         $results[] = [
                             'file' => $file->getRelativePathname(),
                             'key' => $key,
+                            'translation' => trans($key) === $key ? '' : trans($key),
                         ];
                     }
                 }
