@@ -48,3 +48,10 @@ if (!function_exists('is_installed')) {
         return env('APP_INSTALLED', true);
     }
 }
+
+if (!function_exists('plugin_path')) {
+    function plugin_path(string $plugin, string ...$paths): string
+    {
+        return str_replace('//', '', base_path('plugins/') . $plugin . '/' . implode('/', $paths));
+    }
+}
