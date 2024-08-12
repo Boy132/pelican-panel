@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Services\Helpers\PluginService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -11,7 +12,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel = parent::panel($panel)
             ->id('admin')
             ->path('admin')
             ->homeUrl('/')
@@ -33,5 +34,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets');
+
+        app(PluginService::class)->loadPanelPlugins($panel);
+
+        return $panel;
     }
 }
