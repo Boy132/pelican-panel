@@ -21,6 +21,7 @@ use App\Extensions\OAuth\Providers\CommonProvider;
 use App\Extensions\OAuth\Providers\DiscordProvider;
 use App\Extensions\OAuth\Providers\GithubProvider;
 use App\Extensions\OAuth\Providers\SteamProvider;
+use App\Services\Helpers\PluginService;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -203,5 +204,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Scramble::ignoreDefaultRoutes();
+
+        app(PluginService::class)->loadPlugins();
     }
 }
