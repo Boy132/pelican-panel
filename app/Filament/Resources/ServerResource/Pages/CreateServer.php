@@ -321,9 +321,9 @@ class CreateServer extends CreateRecord
                         ->completedIcon('tabler-check')
                         ->columns([
                             'default' => 1,
-                            'sm' => 2,
-                            'md' => 2,
-                            'lg' => 4,
+                            'sm' => 4,
+                            'md' => 4,
+                            'lg' => 6,
                         ])
                         ->schema([
                             Forms\Components\Select::make('egg_id')
@@ -333,7 +333,7 @@ class CreateServer extends CreateRecord
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 3,
+                                    'lg' => 4,
                                 ])
                                 ->searchable()
                                 ->preload()
@@ -390,28 +390,50 @@ class CreateServer extends CreateRecord
                                 ->inline()
                                 ->required(),
 
+                            Forms\Components\ToggleButtons::make('start_on_completion')
+                                ->label('Start Server After Install?')
+                                ->default(true)
+                                ->required()
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 1,
+                                ])
+                                ->options([
+                                    true => 'Yes',
+                                    false => 'No',
+                                ])
+                                ->colors([
+                                    true => 'primary',
+                                    false => 'danger',
+                                ])
+                                ->icons([
+                                    true => 'tabler-code',
+                                    false => 'tabler-code-off',
+                                ])
+                                ->inline(),
+
                             Forms\Components\Textarea::make('startup')
                                 ->hintIcon('tabler-code')
                                 ->label('Startup Command')
                                 ->hidden(fn (Forms\Get $get) => $get('egg_id') === null)
                                 ->required()
                                 ->live()
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 2,
-                                    'lg' => 4,
-                                ])
                                 ->rows(function ($state) {
                                     return str($state)->explode("\n")->reduce(
                                         fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
                                         1
                                     );
-                                }),
+                                })
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 4,
+                                    'md' => 4,
+                                    'lg' => 6,
+                                ]),
 
                             Forms\Components\Hidden::make('environment')->default([]),
-
-                            Forms\Components\Hidden::make('start_on_completion')->default(true),
 
                             Forms\Components\Section::make('Variables')
                                 ->icon('tabler-eggs')
@@ -443,8 +465,7 @@ class CreateServer extends CreateRecord
 
                                             $text = Forms\Components\TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
-                                                ->maxLength(255)
-                                                ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
+                                                ->required(fn (Forms\Get $get) => in_array('required', $get('rules')))
                                                 ->rules(
                                                     fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                                         $validator = Validator::make(['validatorkey' => $value], [
@@ -471,7 +492,7 @@ class CreateServer extends CreateRecord
                                                     ->live(onBlur: true)
                                                     ->hintIcon('tabler-code')
                                                     ->label(fn (Forms\Get $get) => $get('name'))
-                                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
+                                                    ->hintIconTooltip(fn (Forms\Get $get) => implode('|', $get('rules')))
                                                     ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
                                                     ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                                     ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
@@ -808,7 +829,7 @@ class CreateServer extends CreateRecord
 
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
     {
-        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
+        $containsRuleIn = collect($get('rules'))->reduce(
             fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
         );
 
@@ -825,7 +846,7 @@ class CreateServer extends CreateRecord
 
     private function getSelectOptionsFromRules(Forms\Get $get): array
     {
-        $inRule = str($get('rules'))->explode('|')->reduce(
+        $inRule = collect($get('rules'))->reduce(
             fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
         );
 

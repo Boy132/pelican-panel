@@ -103,10 +103,14 @@ class PanelInstaller extends SimplePage implements HasForms
             $variables = array_get($inputs, 'env');
             $this->writeToEnvironment($variables);
 
+            // Clear config cache
+            Artisan::call('config:clear');
+
             // Run migrations
             Artisan::call('migrate', [
                 '--force' => true,
                 '--seed' => true,
+                '--database' => $variables['DB_CONNECTION'],
             ]);
 
             if (!$this->hasCompletedMigrations()) {
