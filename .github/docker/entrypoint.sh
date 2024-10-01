@@ -23,9 +23,13 @@ else
   fi
 fi
 
-mkdir /pelican-data/database
 ln -s /pelican-data/.env /var/www/html/
+
+mkdir /pelican-data/database
 ln -s /pelican-data/database/database.sqlite /var/www/html/database/
+
+mkdir /pelican-data/plugins
+ln -s /pelican-data/plugins /var/www/html/plugins
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
   echo "Generating APP_KEY..."
@@ -52,7 +56,7 @@ else
   echo "Starting PHP-FPM only"
 fi
 
-chown -R www-data:www-data . /pelican-data/.env /pelican-data/database
+chown -R www-data:www-data . /pelican-data/.env /pelican-data/database /pelican-data/plugins
 
 echo "Starting Supervisord"
 exec "$@"
