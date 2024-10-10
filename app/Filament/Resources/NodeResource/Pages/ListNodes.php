@@ -58,7 +58,7 @@ class ListNodes extends ListRecords
                     ->sortable(),
                 TextColumn::make('cpu')
                     ->visibleFrom('sm')
-                    ->icon('tabler-file')
+                    ->icon('tabler-cpu')
                     ->numeric()
                     ->suffix(' %')
                     ->sortable(),
@@ -84,7 +84,8 @@ class ListNodes extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete node')),
                 ]),
             ])
             ->emptyStateIcon('tabler-server-2')
