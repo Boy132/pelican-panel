@@ -5,6 +5,7 @@ namespace App\Console\Commands\Translation;
 use App\Traits\TranslationScannerTrait;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 
 class TranslationGenerateCommand extends Command
 {
@@ -34,6 +35,9 @@ class TranslationGenerateCommand extends Command
             File::ensureDirectoryExists(File::dirname($path . '/'. $file));
             File::put($path . '/'. $file, '<?php return ' . var_export($data, true) . ';');
         }
+
+        $this->comment('Running Pint to format template files...');
+        Process::run('.\vendor\bin\pint ' . $path);
 
         $this->info('All Template files created.');
     }
