@@ -34,6 +34,10 @@ class TranslationKeyScanCommand extends Command
         $results = [];
 
         foreach (resolve(Filesystem::class)->allFiles($paths) as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
             if (preg_match_all($this->pattern(), $file->getContents(), $matches)) {
                 foreach ($matches[2] as $key) {
                     if (!empty($key)) {
