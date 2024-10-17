@@ -18,7 +18,7 @@ class TranslationGenerateCommand extends Command
     {
         $generated = [];
 
-        $results = $this->scanForTranslations([app_path(), resource_path()]);
+        $results = $this->scanForTranslations([app_path(), resource_path()], 'php');
         foreach ($results as $result) {
             $explodedKey = explode('.', $result['key']);
             $file = $explodedKey[0] . '.php';
