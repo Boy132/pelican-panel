@@ -149,6 +149,13 @@ class ActivityLog extends Model
         });
     }
 
+    public function eventName(): string
+    {
+        $name = str_replace(':', '.', $this->event);
+
+        return trans('activity.' . $name);
+    }
+
     public function htmlable()
     {
         $user = $this->actor;
@@ -159,15 +166,13 @@ class ActivityLog extends Model
             ]);
         }
 
-        $event = __('activity.'.str($this->event)->replace(':', '.'));
-
         return "
             <div style='display: flex; align-items: center;'>
                 <img width='50px' height='50px' src='{$user->getFilamentAvatarUrl()}' style='margin-right: 15px' />
 
                 <div>
                     <p>$user->username — $this->event</p>
-                    <p>$event</p>
+                    <p>{$this->eventName()}</p>
                     <p>$this->ip — <span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
                 </div>
             </div>
