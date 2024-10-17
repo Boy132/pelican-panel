@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Translation;
 
 use App\Traits\TranslationScannerTrait;
 use Illuminate\Console\Command;
@@ -9,9 +9,9 @@ class TranslationKeyScanCommand extends Command
 {
     use TranslationScannerTrait;
 
-    protected $description = 'Scans for translation keys.';
+    protected $description = 'Scans for translation keys in PHP files.';
 
-    protected $signature = 'p:scan-translation-keys';
+    protected $signature = 'p:translation:scan-keys';
 
     public function handle(): void
     {
