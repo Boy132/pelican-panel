@@ -37,7 +37,7 @@ class TranslationGenerateCommand extends Command
             File::put($path . '/'. $file, '<?php return ' . var_export($data, true) . ';');
         }
 
-        $this->comment('Running Pint to format template files...');
+        $this->comment('Running Pint to format translation files...');
         Process::run('.\vendor\bin\pint ' . $path);
 
         $this->info('All translation files for ' . Str::upper($lang) . ' created.');
