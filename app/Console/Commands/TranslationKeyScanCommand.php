@@ -37,10 +37,12 @@ class TranslationKeyScanCommand extends Command
             if (preg_match_all($this->pattern(), $file->getContents(), $matches)) {
                 foreach ($matches[2] as $key) {
                     if (!empty($key)) {
+                        $trans = trans($key);
+
                         $results[] = [
                             'file' => $file->getRelativePathname(),
                             'key' => $key,
-                            'translation' => trans($key) === $key ? '' : trans($key),
+                            'translation' => $key === $trans ? '' : (is_array($trans) ? implode($trans) : $trans),
                         ];
                     }
                 }
