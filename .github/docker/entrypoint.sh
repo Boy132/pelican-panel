@@ -21,6 +21,9 @@ else
     echo -e "APP_KEY exists in environment, using that."
     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   fi
+
+  ## enable installer
+  echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
 ln -s /pelican-data/.env /var/www/html/
@@ -42,6 +45,9 @@ fi
 echo -e "Migrating Database"
 php artisan migrate --force
 
+echo -e "Optimizing Filament"
+php artisan filament:optimize
+
 ## start cronjobs for the queue
 echo -e "Starting cron jobs."
 crond -L /var/log/crond -l 5
@@ -56,7 +62,7 @@ else
   echo "Starting PHP-FPM only"
 fi
 
-chown -R www-data:www-data . /pelican-data/.env /pelican-data/database /pelican-data/plugins
+chown -R www-data:www-data /pelican-data/.env /pelican-data/database /pelican-data/plugins
 
 echo "Starting Supervisord"
 exec "$@"
