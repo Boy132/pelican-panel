@@ -111,7 +111,7 @@ class AppServiceProvider extends ServiceProvider
         Scramble::extendOpenApi(fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer')));
         Scramble::ignoreDefaultRoutes();
 
-        app(PluginService::class)->loadPlugins();
+        app(PluginService::class)->loadPlugins(app()); // @phpstan-ignore-line
     }
 
     public function bootAuth(): void
