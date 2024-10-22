@@ -19,6 +19,7 @@ class TranslationGenerateCommand extends Command
     public function handle(): void
     {
         $lang = $this->argument('lang') ?? 'en';
+        $path = lang_path($lang);
 
         $fileData = [];
         foreach ($this->scanForTranslations([app_path(), resource_path()], 'php') as $result) {
@@ -26,10 +27,11 @@ class TranslationGenerateCommand extends Command
             $file = $explodedKey[0] . '.php';
             unset($explodedKey[0]);
 
+            // @phpstan-ignore-next-line
             array_set($fileData[$file], implode('.', $explodedKey), trans($result['key'], locale: $lang));
         }
 
-        $path = lang_path($lang);
+        // @phpstan-ignore-next-line
         foreach ($fileData as $file => $data) {
             $this->comment('Generating "' . $file . '"');
 
