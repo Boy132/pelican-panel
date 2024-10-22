@@ -37,8 +37,10 @@ trait TranslationScannerTrait
 
         $results = [];
 
-        foreach (app(Filesystem::class)->allFiles($paths) as $file) {
-            if ((is_string($extensionFilter) && $file->getExtension() !== $extensionFilter) || (is_array($extensionFilter) && !in_array($extensionFilter, $file->getExtension()))) {
+        /** @var FileSystem $filesystem */
+        $filesystem = app(Filesystem::class); // @phpstan-ignore-line
+        foreach ($filesystem->allFiles($paths) as $file) {
+            if ((is_string($extensionFilter) && $file->getExtension() !== $extensionFilter) || (is_array($extensionFilter) && !in_array($file->getExtension(), $extensionFilter))) {
                 continue;
             }
 
