@@ -216,6 +216,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Scramble::ignoreDefaultRoutes();
 
-        app(PluginService::class)->loadPlugins();
+        app(PluginService::class)->loadPlugins(app()); // @phpstan-ignore-line
     }
 }
