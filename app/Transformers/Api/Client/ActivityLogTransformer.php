@@ -95,7 +95,7 @@ class ActivityLogTransformer extends BaseClientTransformer
             return false;
         }
 
-        preg_match_all('/:(?<key>[\w.-]+\w)(?:[^\w:]?|$)/', $model->eventName, $matches);
+        preg_match_all('/:(?<key>[\w.-]+\w)(?:[^\w:]?|$)/', $model->eventName(), $matches);
 
         $exclude = array_merge($matches['key'], ['ip', 'useragent', 'using_sftp']);
         foreach ($model->properties->keys() as $key) {
