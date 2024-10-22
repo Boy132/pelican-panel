@@ -35,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets');
 
-        app(PluginService::class)->loadPanelPlugins($panel);
+        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
 
         return $panel;
     }
