@@ -28,6 +28,7 @@ class EggExporterService
             'uuid' => $egg->uuid,
             'description' => $egg->description,
             'features' => $egg->features,
+            'query_type' => $egg->query_type,
             'docker_images' => $egg->docker_images,
             'file_denylist' => Collection::make($egg->inherit_file_denylist)->filter(function ($value) {
                 return !empty($value);
