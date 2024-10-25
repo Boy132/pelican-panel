@@ -31,6 +31,7 @@ class ServerQueryService
                 QueryType::Minecraft => $this->minecraft($ip, $port),
                 QueryType::GoldSource => $this->source($ip, $port, SourceQuery::GOLDSOURCE),
                 QueryType::Source => $this->source($ip, $port, SourceQuery::SOURCE),
+                QueryType::Cfx => $this->cfx($ip, $port),
                 default => [],
             };
         });
@@ -98,6 +99,35 @@ class ServerQueryService
             if (isset($query)) {
                 $query->Disconnect();
             }
+        }
+
+        return $data ?? [];
+    }
+
+    private function cfx(string $ip, int $port): array
+    {
+        try {
+            $data = [
+                'format' => 'cfx',
+                'query' => [
+                    'dynamic' => json_decode(file_get_contents("http://$ip:$port/dynamic.json")),
+                    'info' => json_decode(file_get_contents("http://$ip:$port/info.json")),
+                    'players' => json_decode(file_get_contents("http://$ip:$port/players.json")),
+                ],
+            ];
+
+            if ($this->normalize) {
+                $data = [
+                    'hostname' => $data['query']['dynamic']['hostname'] ?? 'unknown',
+                    'version' => $data['query']['dynamic']['iv'] ?? 'unknown',
+                    'players' => [
+                        'current' => $data['query']['dynamic']['clients'] ?? 0,
+                        'max' => $data['query']['dynamic']['sv_maxclients'] ?? 0,
+                    ],
+                ];
+            }
+        } catch (Exception $exception) {
+            report($exception);
         }
 
         return $data ?? [];
