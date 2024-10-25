@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
+use App\Enums\QueryType;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Models\Egg;
@@ -24,6 +25,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
@@ -80,6 +82,10 @@ class EditEgg extends EditRecord
                                 ->placeholder('Add Feature')
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            ToggleButtons::make('query_type')
+                                ->inline()
+                                ->options(QueryType::class)
+                                ->default(QueryType::None),
                             Toggle::make('force_outgoing_ip')
                                 ->inline(false)
                                 ->hintIcon('tabler-question-mark')
