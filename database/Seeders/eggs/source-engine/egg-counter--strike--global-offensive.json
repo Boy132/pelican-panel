@@ -13,6 +13,7 @@
         "gsl_token",
         "steam_disk_space"
     ],
+    "query_type": "source",
     "docker_images": {
         "ghcr.io\/parkervcp\/games:source": "ghcr.io\/parkervcp\/games:source"
     },
