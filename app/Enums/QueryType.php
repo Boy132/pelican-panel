@@ -4,8 +4,9 @@ namespace App\Enums;
 
 enum QueryType: string
 {
-    case Source = 'source';
-    case GoldSource = 'gold_source';
+    case None = 'none';
     case Minecraft = 'minecraft';
+    case GoldSource = 'gold_source';
+    case Source = 'source';
     case Cfx = 'cfx';
 }

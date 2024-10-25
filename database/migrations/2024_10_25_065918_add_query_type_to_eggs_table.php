@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\QueryType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('eggs', function (Blueprint $table) {
-            $table->string('query_type')->nullable();
+            $table->string('query_type')->default(QueryType::None);
         });
     }
 
