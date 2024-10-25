@@ -23,15 +23,17 @@ class ServerQueryService
 
     public function handle(Server $server): array
     {
-        $ip = $server->allocation->ip;
-        $port = $server->allocation->port;
+        return cache()->remember("servers.$server->id.query", now()->addMinute(), function () use ($server) {
+            $ip = $server->allocation->ip;
+            $port = $server->allocation->port;
 
-        return match ($server->egg->query_type) {
-            QueryType::Minecraft => $this->minecraft($ip, $port),
-            QueryType::GoldSource => $this->source($ip, $port, SourceQuery::GOLDSOURCE),
-            QueryType::Source => $this->source($ip, $port, SourceQuery::SOURCE),
-            default => [],
-        };
+            return match ($server->egg->query_type) {
+                QueryType::Minecraft => $this->minecraft($ip, $port),
+                QueryType::GoldSource => $this->source($ip, $port, SourceQuery::GOLDSOURCE),
+                QueryType::Source => $this->source($ip, $port, SourceQuery::SOURCE),
+                default => [],
+            };
+        });
     }
 
     private function minecraft(string $ip, int $port): array
