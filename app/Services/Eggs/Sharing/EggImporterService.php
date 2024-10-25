@@ -2,6 +2,7 @@
 
 namespace App\Services\Eggs\Sharing;
 
+use App\Enums\QueryType;
 use App\Exceptions\Service\InvalidFileUploadException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
@@ -136,6 +137,7 @@ class EggImporterService
             'name' => Arr::get($parsed, 'name'),
             'description' => Arr::get($parsed, 'description'),
             'features' => Arr::get($parsed, 'features'),
+            'query_type' => Arr::get($parsed, 'query_type', QueryType::None),
             'docker_images' => Arr::get($parsed, 'docker_images'),
             'file_denylist' => Collection::make(Arr::get($parsed, 'file_denylist'))
                 ->filter(fn ($value) => !empty($value)),
