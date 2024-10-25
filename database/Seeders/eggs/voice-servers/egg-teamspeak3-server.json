@@ -10,6 +10,7 @@
     "uuid": "983b1fac-d322-4d5f-a636-436127326b37",
     "description": "VoIP software designed with security in mind, featuring crystal clear voice quality, endless customization options, and scalabilty up to thousands of simultaneous users.",
     "features": [],
+    "query_type": "none",
     "docker_images": {
         "Debian": "ghcr.io\/parkervcp\/yolks:debian"
     },
