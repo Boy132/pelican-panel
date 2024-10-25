@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
+use App\Enums\QueryType;
 use App\Filament\Resources\EggResource;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -16,6 +17,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
@@ -63,7 +65,12 @@ class CreateEgg extends CreateRecord
                                 ->placeholder('Add Feature')
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            ToggleButtons::make('query_type')
+                                ->inline()
+                                ->options(QueryType::class)
+                                ->default(QueryType::None),
                             Toggle::make('force_outgoing_ip')
+                                ->inline(false)
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
