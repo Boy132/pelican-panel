@@ -21,7 +21,7 @@ class ServerQueryService
         return $this;
     }
 
-    public function handle(Server $server): array|bool
+    public function handle(Server $server): array
     {
         $ip = $server->allocation->ip;
         $port = $server->allocation->port;
@@ -30,11 +30,11 @@ class ServerQueryService
             QueryType::Minecraft => $this->minecraft($ip, $port),
             QueryType::GoldSource => $this->source($ip, $port, SourceQuery::GOLDSOURCE),
             QueryType::Source => $this->source($ip, $port, SourceQuery::SOURCE),
-            default => false,
+            default => [],
         };
     }
 
-    private function minecraft(string $ip, int $port): array|bool
+    private function minecraft(string $ip, int $port): array
     {
         try {
             $query = new MinecraftPing($ip, $port, self::QUERY_TIMEOUT, false);
@@ -62,10 +62,10 @@ class ServerQueryService
             }
         }
 
-        return $data ?? false;
+        return $data ?? [];
     }
 
-    private function source(string $ip, int $port, int $engine): array|bool
+    private function source(string $ip, int $port, int $engine): array
     {
         try {
             $query = new SourceQuery();
@@ -98,6 +98,6 @@ class ServerQueryService
             }
         }
 
-        return $data ?? false;
+        return $data ?? [];
     }
 }
