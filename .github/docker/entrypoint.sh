@@ -27,6 +27,7 @@ else
 fi
 
 ln -s /pelican-data/.env /var/www/html/
+chown -h www-data:www-data /var/www/html/.env
 
 mkdir /pelican-data/database
 ln -s /pelican-data/database/database.sqlite /var/www/html/database/
