@@ -15,6 +15,7 @@ use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
+use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\ServerDeletionService;
@@ -474,7 +475,7 @@ class EditServer extends EditRecord
                             ])
                             ->schema([
                                 Select::make('egg_id')
-                                    ->disabledOn('edit')
+                                    ->disabled()
                                     ->prefixIcon('tabler-egg')
                                     ->columnSpan([
                                         'default' => 6,
@@ -485,7 +486,36 @@ class EditServer extends EditRecord
                                     ->relationship('egg', 'name')
                                     ->searchable()
                                     ->preload()
-                                    ->required(),
+                                    ->required()
+                                    ->hintAction(
+                                        Action::make('change_egg')
+                                            ->action(function (array $data, Server $server, EggChangerService $service) {
+                                                $service->handle($server, $data['egg_id']);
+
+                                                // Use redirect instead of fillForm to prevent server variables from duplicating
+                                                $this->redirect($this->getUrl(['record' => $server, 'tab' => '-egg-tab']), true);
+                                            })
+                                            ->form(fn (Server $server) => [
+                                                Select::make('egg_id')
+                                                    ->label('New Egg')
+                                                    ->prefixIcon('tabler-egg')
+                                                    ->options(function () use ($server) {
+                                                        $eggs = [];
+                                                        foreach (Egg::all() as $egg) {
+                                                            if ($egg->id === $server->egg->id) {
+                                                                continue;
+                                                            }
+
+                                                            $eggs[$egg->id] = $egg->name;
+                                                        }
+
+                                                        return $eggs;
+                                                    })
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->required(),
+                                            ])
+                                    ),
 
                                 ToggleButtons::make('skip_scripts')
                                     ->label('Run Egg Install Script?')->inline()
