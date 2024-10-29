@@ -33,7 +33,7 @@ use Illuminate\Support\Str;
  * @property string $script_container
  * @property int|null $copy_script_from
  * @property array|null $tags
- * @property string|QueryType|null $query_type
+ * @property string|QueryType $query_type
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property string|null $copy_script_install
@@ -140,7 +140,7 @@ class Egg extends Model
         'config_files' => null,
         'update_url' => null,
         'tags' => '[]',
-        'query_type' => null,
+        'query_type' => QueryType::None,
     ];
 
     protected function casts(): array
