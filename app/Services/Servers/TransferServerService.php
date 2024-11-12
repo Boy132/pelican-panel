@@ -9,6 +9,7 @@ use App\Models\Server;
 use App\Models\ServerTransfer;
 use App\Services\Nodes\NodeJWTService;
 use Carbon\CarbonImmutable;
+use Exception;
 use GuzzleHttp\Exception\TransferException;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Http;
@@ -16,39 +17,12 @@ use Lcobucci\JWT\Token\Plain;
 
 class TransferServerService
 {
-    /**
-     * TransferService constructor.
-     */
     public function __construct(
         private ConnectionInterface $connection,
         private NodeJWTService $nodeJWTService,
     ) {}
 
-    private function notify(Server $server, Plain $token): void
-    {
-        try {
-            Http::daemon($server->node)->post('/api/transfer', [
-                'json' => [
-                    'server_id' => $server->uuid,
-                    'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
-                    'token' => 'Bearer ' . $token->toString(),
-                    'server' => [
-                        'uuid' => $server->uuid,
-                        'start_on_completion' => false,
-                    ],
-                ],
-            ])->toPsrResponse();
-        } catch (TransferException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
-    }
-
-    /**
-     * Starts a transfer of a server to a new node.
-     *
-     * @throws \Throwable
-     */
-    public function handle(Server $server, array $data): bool
+    public function handle(Server $server, array $data): void
     {
         $node_id = $data['node_id'];
         $allocation_id = intval($data['allocation_id']);
@@ -65,7 +39,7 @@ class TransferServerService
             ->first();
 
         if (!$node->isViable($server->memory, $server->disk, $server->cpu)) {
-            return false;
+            throw new Exception('New Node is not viable!');
         }
 
         $server->validateTransferState();
@@ -94,17 +68,12 @@ class TransferServerService
                 ->handle($transfer->newNode, $server->uuid, 'sha256');
 
             // Notify the source node of the pending outgoing transfer.
-            $this->notify($server, $token);
+            $this->notifyWings($server, $token);
 
             return $transfer;
         });
-
-        return true;
     }
 
-    /**
-     * Assigns the specified allocations to the specified server.
-     */
     private function assignAllocationsToServer(Server $server, int $node_id, int $allocation_id, array $additional_allocations): void
     {
         $allocations = $additional_allocations;
@@ -127,6 +96,25 @@ class TransferServerService
 
         if (!empty($updateIds)) {
             Allocation::query()->whereIn('id', $updateIds)->update(['server_id' => $server->id]);
+        }
+    }
+
+    private function notifyWings(Server $server, Plain $token): void
+    {
+        try {
+            Http::daemon($server->node)->post('/api/transfer', [
+                'json' => [
+                    'server_id' => $server->uuid,
+                    'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
+                    'token' => 'Bearer ' . $token->toString(),
+                    'server' => [
+                        'uuid' => $server->uuid,
+                        'start_on_completion' => false,
+                    ],
+                ],
+            ])->toPsrResponse();
+        } catch (TransferException $exception) {
+            throw new DaemonConnectionException($exception);
         }
     }
 }
