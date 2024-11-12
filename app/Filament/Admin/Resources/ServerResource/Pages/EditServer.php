@@ -9,10 +9,12 @@ use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
+use App\Models\Allocation;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Mount;
+use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
@@ -49,6 +51,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\HtmlString;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -829,35 +832,47 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
-                                                        ->label('Transfer Soon™')
-                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
-                                                        ->disabled() //TODO!
-                                                        ->form([ //TODO!
-                                                            Select::make('newNode')
-                                                                ->label('New Node')
+                                                        ->label('Transfer')
+                                                        ->disabled(fn () => Node::count() <= 1)
+                                                        ->action(function (TransferServerService $transfer, Server $server, $data) {
+                                                            try {
+                                                                $transfer->handle($server, $data);
+
+                                                                Notification::make()
+                                                                    ->title('Transfer started')
+                                                                    ->success()
+                                                                    ->send();
+                                                            } catch (Exception $exception) {
+                                                                Notification::make()
+                                                                    ->title('Transfer failed')
+                                                                    ->body($exception->getMessage())
+                                                                    ->danger()
+                                                                    ->send();
+                                                            }
+                                                        })
+                                                        ->form([
+                                                            Select::make('node_id')
+                                                                ->label('Node')
+                                                                ->placeholder('Select new node')
                                                                 ->required()
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                            Select::make('newMainAllocation')
-                                                                ->label('New Main Allocation')
+                                                                ->live()
+                                                                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
+                                                            Select::make('allocation_id')
+                                                                ->label('Primary Allocation')
+                                                                ->placeholder('Select new primary allocation')
                                                                 ->required()
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                            Select::make('newAdditionalAllocation')
-                                                                ->label('New Additional Allocations')
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
+                                                                ->disabled(fn (Get $get) => !$get('node_id'))
+                                                                ->options(fn (Get $get) => Node::where('id', $get('node_id'))->first()?->allocations->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]) ?? []),
+                                                            Select::make('allocation_additional')
+                                                                ->label('Additional Allocations')
+                                                                ->multiple()
+                                                                ->disabled(fn (Get $get) => !$get('node_id'))
+                                                                ->options(fn (Get $get) => Node::where('id', $get('node_id'))->first()?->allocations->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]) ?? []),
                                                         ])
                                                         ->modalHeading('Transfer'),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint('Transfer this server to another node connected to this panel. Warning! This feature has not been fully tested and may have bugs.'),
+                                                    ->hint(new HtmlString('Transfer this server to another node connected to this panel. <br /><b>Warning:</b> This feature has not been fully tested and may have bugs.')),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
