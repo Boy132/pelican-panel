@@ -14,34 +14,11 @@ use Lcobucci\JWT\Token\Plain;
 
 class TransferServerService
 {
-    /**
-     * TransferService constructor.
-     */
     public function __construct(
         private ConnectionInterface $connection,
         private NodeJWTService $nodeJWTService,
     ) {}
 
-    private function notify(Server $server, Plain $token): void
-    {
-        Http::daemon($server->node)->post('/api/transfer', [
-            'json' => [
-                'server_id' => $server->uuid,
-                'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
-                'token' => 'Bearer ' . $token->toString(),
-                'server' => [
-                    'uuid' => $server->uuid,
-                    'start_on_completion' => false,
-                ],
-            ],
-        ])->toPsrResponse();
-    }
-
-    /**
-     * Starts a transfer of a server to a new node.
-     *
-     * @throws \Throwable
-     */
     public function handle(Server $server, array $data): bool
     {
         $node_id = $data['node_id'];
@@ -88,7 +65,7 @@ class TransferServerService
                 ->handle($transfer->newNode, $server->uuid, 'sha256');
 
             // Notify the source node of the pending outgoing transfer.
-            $this->notify($server, $token);
+            $this->notifyWings($server, $token);
 
             return $transfer;
         });
@@ -96,9 +73,6 @@ class TransferServerService
         return true;
     }
 
-    /**
-     * Assigns the specified allocations to the specified server.
-     */
     private function assignAllocationsToServer(Server $server, int $node_id, int $allocation_id, array $additional_allocations): void
     {
         $allocations = $additional_allocations;
@@ -122,5 +96,20 @@ class TransferServerService
         if (!empty($updateIds)) {
             Allocation::query()->whereIn('id', $updateIds)->update(['server_id' => $server->id]);
         }
+    }
+
+    private function notifyWings(Server $server, Plain $token): void
+    {
+        Http::daemon($server->node)->post('/api/transfer', [
+            'json' => [
+                'server_id' => $server->uuid,
+                'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
+                'token' => 'Bearer ' . $token->toString(),
+                'server' => [
+                    'uuid' => $server->uuid,
+                    'start_on_completion' => false,
+                ],
+            ],
+        ])->toPsrResponse();
     }
 }
