@@ -6,6 +6,7 @@ use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use App\Models\User;
+use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -13,6 +14,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
@@ -26,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(Application $app): void
+    public function boot(Application $app, SoftwareVersionService $versionService): void
     {
         Relation::enforceMorphMap([
             'allocation' => Models\Allocation::class,
@@ -78,6 +80,16 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function (User $user, $ability) {
             return $user->isRootAdmin() ? true : null;
         });
+
+        AboutCommand::add('Pelican', [
+            'Panel Version' => $versionService->currentPanelVersion(),
+            'Latest Version' => $versionService->latestPanelVersion(),
+            'Up-to-Date' => $versionService->isLatestPanel() ? '<fg=green;options=bold>Yes</>' : '<fg=red;options=bold>No</>',
+        ]);
+
+        AboutCommand::add('Drivers', 'Backups', config('backups.default'));
+
+        AboutCommand::add('Environment', 'Installation Directory', base_path());
     }
 
     /**
