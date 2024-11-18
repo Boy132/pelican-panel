@@ -8,7 +8,6 @@ use App\Models\DatabaseHost;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class DatabaseHostTransformer extends BaseTransformer
 {
@@ -44,12 +43,10 @@ class DatabaseHostTransformer extends BaseTransformer
 
     /**
      * Include the databases associated with this host.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeDatabases(DatabaseHost $model): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVER_DATABASES)) {
+        if (!$this->authorize(Database::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -60,12 +57,10 @@ class DatabaseHostTransformer extends BaseTransformer
 
     /**
      * Include the node associated with this host.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeNode(DatabaseHost $model): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+        if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
