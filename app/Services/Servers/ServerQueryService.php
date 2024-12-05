@@ -25,7 +25,7 @@ class ServerQueryService
     {
         return cache()->remember("servers.$server->id.query", now()->addMinute(), function () use ($server) {
             $ip = $server->allocation->ip;
-            $port = $server->allocation->port;
+            $port = $server->allocation->port + $server->egg->query_port_diff;
 
             return match ($server->egg->query_type) {
                 QueryType::Minecraft => $this->minecraft($ip, $port),

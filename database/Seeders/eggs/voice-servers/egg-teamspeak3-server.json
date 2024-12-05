@@ -11,6 +11,7 @@
     "description": "VoIP software designed with security in mind, featuring crystal clear voice quality, endless customization options, and scalabilty up to thousands of simultaneous users.",
     "features": [],
     "query_type": "none",
+    "query_port_diff": 0,
     "docker_images": {
         "Debian": "ghcr.io\/parkervcp\/yolks:debian"
     },

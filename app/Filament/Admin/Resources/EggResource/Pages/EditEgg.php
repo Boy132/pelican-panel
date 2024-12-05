@@ -79,22 +79,26 @@ class EditEgg extends EditRecord
                                 ->placeholder('Add Feature')
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            TagsInput::make('tags')
+                                ->placeholder('Add Tags')
+                                ->helperText('')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             ToggleButtons::make('query_type')
                                 ->inline()
                                 ->options(QueryType::class)
-                                ->default(QueryType::None),
+                                ->default(QueryType::None)
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            TextInput::make('query_port_diff')
+                                ->numeric()
+                                ->minValue(0)
+                                ->default(0),
                             Toggle::make('force_outgoing_ip')
                                 ->inline(false)
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
-                            Hidden::make('script_is_privileged')
-                                ->helperText('The docker images available to servers using this egg.'),
-                            TagsInput::make('tags')
-                                ->placeholder('Add Tags')
-                                ->helperText('')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            Hidden::make('script_is_privileged'),
                             TextInput::make('update_url')
                                 ->label('Update URL')
                                 ->url()
