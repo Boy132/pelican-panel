@@ -65,10 +65,19 @@ class CreateEgg extends CreateRecord
                                 ->placeholder('Add Feature')
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            TagsInput::make('tags')
+                                ->placeholder('Add Tags')
+                                ->helperText('')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             ToggleButtons::make('query_type')
                                 ->inline()
                                 ->options(QueryType::class)
-                                ->default(QueryType::None),
+                                ->default(QueryType::None)
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            TextInput::make('query_port_diff')
+                                ->numeric()
+                                ->minValue(0)
+                                ->default(0),
                             Toggle::make('force_outgoing_ip')
                                 ->inline(false)
                                 ->hintIcon('tabler-question-mark')
@@ -77,10 +86,6 @@ class CreateEgg extends CreateRecord
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
                             Hidden::make('script_is_privileged')
                                 ->default(1),
-                            TagsInput::make('tags')
-                                ->placeholder('Add Tags')
-                                ->helperText('')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             TextInput::make('update_url')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('URLs must point directly to the raw .json file.')
