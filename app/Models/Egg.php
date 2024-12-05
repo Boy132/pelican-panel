@@ -34,6 +34,7 @@ use Illuminate\Support\Str;
  * @property int|null $copy_script_from
  * @property array|null $tags
  * @property string|QueryType $query_type
+ * @property int $query_port_diff
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property string|null $copy_script_install
@@ -107,6 +108,7 @@ class Egg extends Model
         'copy_script_from',
         'tags',
         'query_type',
+        'query_port_diff',
     ];
 
     public static array $validationRules = [
@@ -139,6 +141,7 @@ class Egg extends Model
         'update_url' => null,
         'tags' => '[]',
         'query_type' => QueryType::None,
+        'query_port_diff' => 0,
     ];
 
     protected function casts(): array
