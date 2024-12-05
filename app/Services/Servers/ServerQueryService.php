@@ -3,6 +3,7 @@
 namespace App\Services\Servers;
 
 use App\Enums\QueryType;
+use App\Models\EggVariable;
 use App\Models\Server;
 use Exception;
 use xPaw\MinecraftPing;
@@ -25,7 +26,7 @@ class ServerQueryService
     {
         return cache()->remember("servers.$server->id.query", now()->addMinute(), function () use ($server) {
             $ip = $server->allocation->ip;
-            $port = $server->allocation->port + $server->egg->query_port_diff;
+            $port = $server->variables->filter(fn (EggVariable $variable) => $variable->env_variable === 'QUERY_PORT')->first()?->server_value ?? $server->allocation->port + $server->egg->query_port_diff;
 
             return match ($server->egg->query_type) {
                 QueryType::Minecraft => $this->minecraft($ip, $port),
