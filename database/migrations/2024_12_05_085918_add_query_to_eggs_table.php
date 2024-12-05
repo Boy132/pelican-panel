@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::table('eggs', function (Blueprint $table) {
             $table->string('query_type')->default(QueryType::None);
+            $table->unsignedSmallInteger('query_port_diff')->default(0);
         });
     }
 

@@ -15,6 +15,7 @@
         "pid_limit"
     ],
     "query_type": "minecraft",
+    "query_port_diff": 0,
     "docker_images": {
         "Java 21": "ghcr.io\/parkervcp\/yolks:java_21",
         "Java 17": "ghcr.io\/parkervcp\/yolks:java_17",

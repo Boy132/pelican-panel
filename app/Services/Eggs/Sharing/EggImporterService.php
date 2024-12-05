@@ -138,6 +138,7 @@ class EggImporterService
             'description' => Arr::get($parsed, 'description'),
             'features' => Arr::get($parsed, 'features'),
             'query_type' => Arr::get($parsed, 'query_type', QueryType::None),
+            'query_port_diff' => Arr::get($parsed, 'query_port_diff', 0),
             'docker_images' => Arr::get($parsed, 'docker_images'),
             'file_denylist' => Collection::make(Arr::get($parsed, 'file_denylist'))
                 ->filter(fn ($value) => !empty($value)),
