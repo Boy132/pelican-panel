@@ -25,6 +25,7 @@ return new class extends Migration
     {
         Schema::table('eggs', function (Blueprint $table) {
             $table->dropColumn('query_type');
+            $table->dropColumn('query_port_diff');
         });
     }
 };
