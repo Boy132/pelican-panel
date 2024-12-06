@@ -25,7 +25,8 @@ class EditMount extends EditRecord
                     TextInput::make('name')
                         ->required()
                         ->helperText('Unique name used to separate this mount from another.')
-                        ->maxLength(64),
+                        ->maxLength(64)
+                        ->columnSpanFull(),
                     ToggleButtons::make('read_only')
                         ->label('Read only?')
                         ->helperText('Is the mount read only inside the container?')
@@ -44,17 +45,9 @@ class EditMount extends EditRecord
                         ->inline()
                         ->default(false)
                         ->required(),
-                    TextInput::make('source')
-                        ->required()
-                        ->helperText('File path on the host system to mount to a container.')
-                        ->maxLength(255),
-                    TextInput::make('target')
-                        ->required()
-                        ->helperText('Where the mount will be accessible inside a container.')
-                        ->maxLength(255),
                     ToggleButtons::make('user_mountable')
-                        ->hidden()
                         ->label('User mountable?')
+                        ->helperText('Should users be allowed to enable/ disable this mount?')
                         ->options([
                             false => 'No',
                             true => 'Yes',
@@ -67,9 +60,17 @@ class EditMount extends EditRecord
                             false => 'success',
                             true => 'warning',
                         ])
-                        ->default(false)
                         ->inline()
+                        ->default(false)
                         ->required(),
+                    TextInput::make('source')
+                        ->required()
+                        ->helperText('File path on the host system to mount to a container.')
+                        ->maxLength(255),
+                    TextInput::make('target')
+                        ->required()
+                        ->helperText('Where the mount will be accessible inside a container.')
+                        ->maxLength(255),
                     Textarea::make('description')
                         ->helperText('A longer description for this mount.')
                         ->columnSpanFull(),
