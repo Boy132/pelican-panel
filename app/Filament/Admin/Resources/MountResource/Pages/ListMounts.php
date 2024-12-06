@@ -10,7 +10,6 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -24,20 +23,30 @@ class ListMounts extends ListRecords
             ->searchable(false)
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('source')
-                    ->searchable(),
-                TextColumn::make('target')
-                    ->searchable(),
-                IconColumn::make('read_only')
-                    ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
-                    ->color(fn (bool $state) => $state ? 'success' : 'danger')
+                    ->description(fn (Mount $mount) => "$mount->source -> $mount->target")
                     ->sortable(),
-                IconColumn::make('user_mountable')
-                    ->hidden()
-                    ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
-                    ->color(fn (bool $state) => $state ? 'success' : 'danger')
-                    ->sortable(),
+                TextColumn::make('eggs.name')
+                    ->icon('tabler-eggs')
+                    ->label('Eggs')
+                    ->badge()
+                    ->placeholder('All eggs'),
+                TextColumn::make('nodes.name')
+                    ->icon('tabler-server-2')
+                    ->label('Nodes')
+                    ->badge()
+                    ->placeholder('All nodes'),
+                TextColumn::make('read_only')
+                    ->label('Read only?')
+                    ->badge()
+                    ->icon(fn ($state) => $state ? 'tabler-writing-off' : 'tabler-writing')
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->formatStateUsing(fn ($state) => $state ? 'Read only' : 'Writeable'),
+                TextColumn::make('user_mountable')
+                    ->label('User mountable?')
+                    ->badge()
+                    ->icon(fn ($state) => $state ? 'tabler-user-bolt' : 'tabler-user-cancel')
+                    ->color(fn ($state) => $state ? 'warning' : 'success')
+                    ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No'),
             ])
             ->actions([
                 EditAction::make(),
