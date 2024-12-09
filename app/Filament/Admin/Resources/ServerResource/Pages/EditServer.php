@@ -499,18 +499,7 @@ class EditServer extends EditRecord
                                                 Select::make('egg_id')
                                                     ->label('New Egg')
                                                     ->prefixIcon('tabler-egg')
-                                                    ->options(function () use ($server) {
-                                                        $eggs = [];
-                                                        foreach (Egg::all() as $egg) {
-                                                            if ($egg->id === $server->egg->id) {
-                                                                continue;
-                                                            }
-
-                                                            $eggs[$egg->id] = $egg->name;
-                                                        }
-
-                                                        return $eggs;
-                                                    })
+                                                    ->options(fn () => Egg::all()->filter(fn (Egg $egg) => $egg->id !== $server->egg->id)->mapWithKeys(fn (Egg $egg) => [$egg->id => $egg->name]))
                                                     ->searchable()
                                                     ->preload()
                                                     ->required(),
