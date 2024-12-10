@@ -862,12 +862,12 @@ class EditServer extends EditRecord
                                                                 ->placeholder('Select new primary allocation')
                                                                 ->required()
                                                                 ->disabled(fn (Get $get) => !$get('node_id'))
-                                                                ->options(fn (Get $get) => Node::where('id', $get('node_id'))->first()?->allocations->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]) ?? []),
+                                                                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address])),
                                                             Select::make('allocation_additional')
                                                                 ->label('Additional Allocations')
                                                                 ->multiple()
                                                                 ->disabled(fn (Get $get) => !$get('node_id'))
-                                                                ->options(fn (Get $get) => Node::where('id', $get('node_id'))->first()?->allocations->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]) ?? []),
+                                                                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address])),
                                                         ])
                                                         ->modalHeading('Transfer'),
                                                 ])->fullWidth(),
