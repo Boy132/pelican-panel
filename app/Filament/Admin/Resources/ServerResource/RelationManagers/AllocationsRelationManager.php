@@ -8,13 +8,13 @@ use App\Services\Allocations\AssignmentService;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AssociateAction;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -28,15 +28,7 @@ class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('ip')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
+    protected static ?string $icon = 'tabler-plug-connected';
 
     public function table(Table $table): Table
     {
@@ -47,29 +39,33 @@ class AllocationsRelationManager extends RelationManager
             ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             ->inverseRelationship('server')
             ->columns([
-                TextColumn::make('ip')->label('IP'),
-                TextColumn::make('port')->label('Port'),
-                TextInputColumn::make('ip_alias')->label('Alias'),
+                TextColumn::make('ip')
+                    ->label('IP'),
+                TextColumn::make('port')
+                    ->label('Port'),
+                TextInputColumn::make('ip_alias')
+                    ->label('Alias'),
                 IconColumn::make('primary')
-                    ->icon(fn ($state) => match ($state) {
-                        true => 'tabler-star-filled',
-                        default => 'tabler-star',
+                    ->label('Primary')
+                    ->icon(fn ($state) => $state ? 'tabler-star-filled' : 'tabler-star')
+                    ->color(fn ($state) => $state ? 'warning' : 'gray')
+                    ->action(function (Allocation $allocation) {
+                        $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]);
+                        $this->deselectAllTableRecords();
                     })
-                    ->color(fn ($state) => match ($state) {
-                        true => 'warning',
-                        default => 'gray',
-                    })
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
-                    ->label('Primary'),
+                    ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
             ])
             ->actions([
                 Action::make('make-primary')
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
+                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
+                    ->action(function (Allocation $allocation) {
+                        $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]);
+                        $this->deselectAllTableRecords();
+                    }),
             ])
             ->headerActions([
-                CreateAction::make()->label('Create Allocation')
+                CreateAction::make()
+                    ->label('Create Allocation')
                     ->createAnother(false)
                     ->form(fn () => [
                         Select::make('allocation_ip')
@@ -148,16 +144,18 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
+                    ->label('Add Allocation')
+                    ->modalHeading('Add Allocation')
+                    ->modalSubmitActionLabel('Add')
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
-                    ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label('Add Allocation'),
+                    ->recordSelectSearchColumns(['ip', 'port']),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DissociateBulkAction::make(),
+                BulkActionGroup::make([
+                    DissociateBulkAction::make(),
                 ]),
             ]);
     }

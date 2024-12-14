@@ -9,9 +9,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
 
-/**
- * @property Role $record
- */
 class CreateRole extends CreateRecord
 {
     public Collection $permissions;
@@ -34,6 +31,8 @@ class CreateRole extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['guard_name'] = Role::DEFAULT_GUARD_NAME;
+
         $this->permissions = collect($data)
             ->filter(function ($permission, $key) {
                 return !in_array($key, ['name', 'guard_name']);
@@ -51,10 +50,13 @@ class CreateRole extends CreateRecord
         $this->permissions->each(function ($permission) use ($permissionModels) {
             $permissionModels->push(Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => $this->data['guard_name'],
+                'guard_name' => Role::DEFAULT_GUARD_NAME,
             ]));
         });
 
-        $this->record->syncPermissions($permissionModels);
+        /** @var Role $role */
+        $role = $this->getRecord();
+
+        $role->syncPermissions($permissionModels);
     }
 }

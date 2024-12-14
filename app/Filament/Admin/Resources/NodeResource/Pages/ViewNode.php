@@ -4,10 +4,10 @@ namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditNode extends EditRecord
+class ViewNode extends ViewRecord
 {
     protected static string $resource = NodeResource::class;
 
@@ -30,24 +30,11 @@ class EditNode extends EditRecord
         return $data;
     }
 
-    protected function getFormActions(): array
-    {
-        return [];
-    }
-
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()
-                ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Has Servers' : __('filament-actions::delete.single.label')),
-            $this->getSaveFormAction()->formId('form'),
+            EditAction::make(),
         ];
-    }
-
-    protected function afterSave(): void
-    {
-        $this->fillForm();
     }
 
     // Used by chart widgets

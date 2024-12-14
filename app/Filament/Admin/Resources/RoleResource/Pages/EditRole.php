@@ -10,9 +10,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
 
-/**
- * @property Role $record
- */
 class EditRole extends EditRecord
 {
     protected static string $resource = RoleResource::class;
@@ -42,15 +39,24 @@ class EditRole extends EditRecord
             ]));
         });
 
-        $this->record->syncPermissions($permissionModels);
+        /** @var Role $role */
+        $role = $this->getRecord();
+
+        $role->syncPermissions($permissionModels);
     }
 
     protected function getHeaderActions(): array
     {
         return [
             DeleteAction::make()
-                ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users_count >= 1)
-                ->label(fn (Role $role) => $role->isRootAdmin() ? 'Can\'t delete Root Admin' : ($role->users_count >= 1 ? 'In Use' : 'Delete')),
+                ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users()->count() >= 1)
+                ->label(fn (Role $role) => $role->isRootAdmin() ? 'Can\'t delete Root Admin' : ($role->users()->count() >= 1 ? 'In Use' : __('filament-actions::delete.single.label'))),
+            $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }
