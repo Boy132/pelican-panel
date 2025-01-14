@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model as IlluminateModel;
 use Spatie\Permission\Models\Role as BaseRole;
 
 /**
@@ -40,6 +41,11 @@ class Role extends BaseRole
             'seeIps',
         ],
     ];
+
+    public function hasRoleScope(IlluminateModel $model): bool
+    {
+        return RoleScope::where('role_id', $this->id)->where('scope_type', strtolower(class_basename($model)))->where('scope_id', $model->getKey())->count() >= 1;
+    }
 
     public function isRootAdmin(): bool
     {

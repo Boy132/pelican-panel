@@ -349,6 +349,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->canned($abilities, $arguments);
     }
 
+    public function hasRoleScope(IlluminateModel $model): bool
+    {
+        foreach ($this->roles as $role) {
+            if ($role->hasRoleScope($model)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isLastRootAdmin(): bool
     {
         $rootAdmins = User::all()->filter(fn ($user) => $user->isRootAdmin());
