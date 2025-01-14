@@ -20,6 +20,10 @@ trait DefaultPolicies
      */
     public function view(User $user, Model $model): bool
     {
+        if (!$user->hasRoleScope($model)) {
+            return false;
+        }
+
         return $user->can('view ' . $this->modelName, $model);
     }
 
@@ -36,6 +40,10 @@ trait DefaultPolicies
      */
     public function update(User $user, Model $model): bool
     {
+        if (!$user->hasRoleScope($model)) {
+            return false;
+        }
+
         return $user->can('update ' . $this->modelName, $model);
     }
 
@@ -44,6 +52,10 @@ trait DefaultPolicies
      */
     public function delete(User $user, Model $model): bool
     {
+        if (!$user->hasRoleScope($model)) {
+            return false;
+        }
+
         return $user->can('delete ' . $this->modelName, $model);
     }
 }
