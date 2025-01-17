@@ -142,6 +142,11 @@ class ActivityLog extends Model
         });
     }
 
+    public function eventName(): string
+    {
+        return trans('activity.'.str($this->event)->replace(':', '.'));
+    }
+
     public function htmlable(): string
     {
         $user = $this->actor;
