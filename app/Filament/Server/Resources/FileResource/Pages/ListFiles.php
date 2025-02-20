@@ -174,7 +174,7 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->url(fn () => DownloadFiles::getUrl(['path' => $this->path]), true),
+                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label('Move')
@@ -474,7 +474,7 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.uploaded')
                                 ->property('directory', $this->path)
-                                ->property('file', $file->getFilename())
+                                ->property('file', $file->getClientOriginalName())
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
@@ -498,10 +498,10 @@ class ListFiles extends ListRecords
                                 ->live()
                                 ->schema([
                                     FileUpload::make('files')
-                                        ->label('File(s)')
                                         ->storeFiles(false)
                                         ->previewable(false)
                                         ->preserveFilenames()
+                                        ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
                                         ->multiple(),
                                 ]),
                             Tab::make('Upload From URL')
