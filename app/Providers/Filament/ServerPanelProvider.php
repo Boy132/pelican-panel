@@ -10,6 +10,7 @@ use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
 use App\Models\Server;
+use App\Services\Helpers\PluginService;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -30,7 +31,7 @@ class ServerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel
             ->id('server')
             ->path('server')
             ->homeUrl('/')
@@ -88,5 +89,9 @@ class ServerPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+
+        return $panel;
     }
 }
