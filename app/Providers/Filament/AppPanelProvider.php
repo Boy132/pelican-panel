@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Services\Helpers\PluginService;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,7 +24,7 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel
             ->id('app')
             ->spa()
             ->databaseNotifications()
@@ -61,5 +62,9 @@ class AppPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+
+        return $panel;
     }
 }
