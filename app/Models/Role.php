@@ -47,6 +47,10 @@ class Role extends BaseRole
         'activityLog' => [
             'seeIps',
         ],
+        'plugin' => [
+            'viewList',
+            'update',
+        ],
     ];
 
     /** @var array<string, array<string>> */
