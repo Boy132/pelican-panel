@@ -19,6 +19,7 @@ use chillerlan\QRCode\QROptions;
 use DateTimeZone;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -126,6 +127,21 @@ class EditProfile extends BaseEditProfile
                                             ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                             ->native(false),
+                                        FileUpload::make('avatar')
+                                            ->visible(fn () => config('panel.filament.uploadable-avatars'))
+                                            ->avatar()
+                                            ->acceptedFileTypes(['image/png'])
+                                            ->directory('avatars')
+                                            ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
+                                            ->hintAction(function (FileUpload $fileUpload) {
+                                                $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
+
+                                                return Action::make('remove_avatar')
+                                                    ->icon('tabler-photo-minus')
+                                                    ->iconButton()
+                                                    ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
+                                                    ->action(fn () => $fileUpload->getDisk()->delete($path));
+                                            }),
                                     ]),
 
                                 Tab::make(trans('profile.tabs.oauth'))
