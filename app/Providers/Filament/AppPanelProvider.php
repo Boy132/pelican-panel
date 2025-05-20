@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Services\Helpers\PluginService;
+use App\Facades\Plugins;
 use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
@@ -26,7 +26,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources');
 
-        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+        Plugins::loadPanelPlugins($panel);
 
         return $panel;
     }
