@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Services\Helpers\PluginService;
+use App\Facades\Plugins;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -35,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets');
 
-        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+        Plugins::loadPanelPlugins($panel);
 
         return $panel;
     }
