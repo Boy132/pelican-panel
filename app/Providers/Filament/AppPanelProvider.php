@@ -2,11 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Facades\Plugins;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
-use App\Services\Helpers\PluginService;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -67,7 +67,7 @@ class AppPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
 
-        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+        Plugins::loadPanelPlugins($panel);
 
         return $panel;
     }
