@@ -22,7 +22,7 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
-use App\Services\Helpers\PluginService;
+use App\Facades\Plugins;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -192,6 +192,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Scramble::ignoreDefaultRoutes();
 
-        app(PluginService::class)->loadPlugins(app()); // @phpstan-ignore-line
+        Plugins::loadPlugins();
     }
 }
