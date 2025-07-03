@@ -30,7 +30,11 @@ class PluginService
 
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
-            if ($plugin->isDisabled() || !$plugin->isInstalled()) {
+            if (!$plugin->shouldLoad()) {
+                if (!$plugin->isCompatible()) {
+                    $this->setStatus($plugin, PluginStatus::Incompatible, 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . ' but you are using version ' . config('app.version') . '!');
+                }
+
                 continue;
             }
 
@@ -106,7 +110,7 @@ class PluginService
 
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
-            if (!$plugin->shouldLoad($panel->getId())) {
+            if (!$plugin->shouldLoadPanel($panel->getId())) {
                 continue;
             }
 

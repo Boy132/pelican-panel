@@ -112,9 +112,20 @@ class Plugin extends Model implements HasPluginSettings
         return '\\' . $this->namespace . '\\' . $this->class;
     }
 
-    public function shouldLoad(string $panelId): bool
+    public function shouldLoadPanel(string $panelId): bool
     {
-        return !$this->isDisabled() && $this->isInstalled() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
+        return $this->shouldLoad() && ($this->panels === null || in_array($panelId,
+            explode(',', $this->panels)));
+    }
+
+    public function shouldLoad(): bool
+    {
+        return $this->isEnabled() && $this->isInstalled() && $this->isCompatible();
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->status === PluginStatus::Enabled;
     }
 
     public function isDisabled(): bool
@@ -142,7 +153,7 @@ class Plugin extends Model implements HasPluginSettings
             return false;
         }
 
-        return $this->panel_version === config('app.version');
+        return version_compare($this->panel_version, config('app.version'), str($this->panel_version)->startsWith('^') ? '>=' : '=');
     }
 
     public function hasSettings(): bool
