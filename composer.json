@@ -83,7 +83,8 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
         "post-install-cmd": [
-            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "php artisan p:plugin:composer"
         ]
     },
     "config": {
