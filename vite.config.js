@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { globSync } from "glob";
+import { globSync } from 'glob';
 
 export default defineConfig({
     plugins: [
