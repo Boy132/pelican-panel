@@ -11,5 +11,8 @@ export default {
         './resources/views/livewire/**/*.blade.php',
 
         './vendor/filament/**/*.blade.php',
+        
+        './plugins/*/src/Filament/**/*.php',
+        './plugins/*/resources/views/livewire/**/*.blade.php',
     ],
 };
