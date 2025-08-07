@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Facades\Plugins;
 use App\Filament\Pages\Auth\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
@@ -13,7 +12,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $panel = parent::panel($panel)
+        return parent::panel($panel)
             ->id('admin')
             ->path('admin')
             ->homeUrl('/')
@@ -39,9 +38,5 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets');
-
-        Plugins::loadPanelPlugins($panel);
-
-        return $panel;
     }
 }
