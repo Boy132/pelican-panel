@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Facades\Plugins;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -11,7 +10,7 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $panel = parent::panel($panel)
+        return parent::panel($panel)
             ->id('app')
             ->default()
             ->breadcrumbs(false)
@@ -24,9 +23,5 @@ class AppPanelProvider extends PanelProvider
                     ->visible(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources');
-
-        Plugins::loadPanelPlugins($panel);
-
-        return $panel;
     }
 }
