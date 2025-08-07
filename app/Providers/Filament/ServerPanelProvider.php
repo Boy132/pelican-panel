@@ -16,10 +16,12 @@ class ServerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel
             ->id('server')
             ->path('server')
-            ->homeUrl('/')
+            ->homeUrl('/');
+
+        return parent::panel($panel)
             ->tenant(Server::class)
             ->userMenuItems([
                 'profile' => MenuItem::make()
