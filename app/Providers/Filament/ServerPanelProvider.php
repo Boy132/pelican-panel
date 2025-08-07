@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Facades\Plugins;
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
 use App\Filament\Pages\Auth\EditProfile;
@@ -17,7 +16,7 @@ class ServerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $panel = parent::panel($panel)
+        return parent::panel($panel)
             ->id('server')
             ->path('server')
             ->homeUrl('/')
@@ -51,9 +50,5 @@ class ServerPanelProvider extends PanelProvider
             ->middleware([
                 ServerSubject::class,
             ]);
-
-        Plugins::loadPanelPlugins($panel);
-
-        return $panel;
     }
 }
