@@ -14,7 +14,7 @@ class LanguageService
 
     public function isLanguageTranslated(string $countryCode = 'en'): bool
     {
-        return in_array($countryCode, self::TRANSLATED_COMPLETELY, true);
+        return in_array($countryCode, array_merge($this->getAvailableLanguages(), self::TRANSLATED_COMPLETELY), true);
     }
 
     /**
@@ -24,12 +24,12 @@ class LanguageService
     {
         $baseLanguages = collect(File::directories(base_path($path)))->mapWithKeys(function ($path) {
             $code = basename($path);
-
             return [$code => title_case(Locale::getDisplayName($code, $code))];
         })->toArray();
 
-        $pluginLanguages = collect(Plugins::getPluginLanguages())->mapWithKeys(fn ($code) => [$code => title_case(Locale::getDisplayName($code, $code))])->toArray();
+        $pluginLanguages = collect(Plugins::getPluginLanguages())->mapWithKeys(fn ($code) => [$code => title_case(Locale::getDisplayName(str($code)->after('_'), $code))])->toArray();
 
         return array_unique(array_merge($baseLanguages, $pluginLanguages));
     }
+
 }

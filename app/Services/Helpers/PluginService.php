@@ -302,11 +302,14 @@ class PluginService
         $path = plugin_path($plugin, 'plugin.json');
 
         if (File::exists($path)) {
-            $pluginData = File::json($path, JSON_THROW_ON_ERROR);
-            $metaData = array_merge($pluginData['meta'] ?? [], $data);
-            $pluginData['meta'] = $metaData;
+            try {
+                $pluginData = File::json($path, JSON_THROW_ON_ERROR);
+                $pluginData['meta'] = array_merge($pluginData['meta'] ?? [], $data);
 
-            File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            } catch (Exception $e) {
+                report($e);
+            }
         }
     }
 
@@ -343,7 +346,7 @@ class PluginService
     /** @return string[] */
     public function getPluginLanguages(): array
     {
-        $languages = [];
+        $languages = collect();
 
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
@@ -351,10 +354,26 @@ class PluginService
                 continue;
             }
 
-            $languages = array_merge($languages, collect(File::directories(plugin_path($plugin->id, 'lang')))->map(fn ($path) => basename($path))->toArray());
+            $dirs = collect(File::directories(plugin_path($plugin->id, 'lang')))
+                ->map(fn ($path) => basename($path))
+                ->filter(fn ($dir) => $dir !== 'vendor')
+                ->filter(function ($dir) {
+                    return 
+                        is_string($dir) &&
+                        strlen($dir) > 0 &&
+                
+                        (function($code) {
+                            try {
+                                return \Locale::getDisplayName($code, $code) !== $code;
+                            } catch (\Throwable $e) {
+                                return false;
+                            }
+                        })($dir);
+                });
+            $languages = $languages->merge($dirs);
         }
 
-        return array_unique($languages);
+        return $languages->unique()->values()->all();
     }
 
     public function isDevModeActive(): bool

@@ -170,6 +170,7 @@ class PluginResource extends Resource
                 CreateAction::make()
                     ->createAnother(false)
                     ->visible(fn () => Plugins::isDevModeActive())
+                    ->label(fn ($livewire) => trans('filament-actions::create.single.label', ['label' => str($livewire->activeTab == 'all' ? trans('admin/plugin.model_label') : $livewire->activeTab)->title()]))
                     ->action(function ($data) {
                         $exitCode = Artisan::call('p:plugin:make', [
                             '--name' => $data['name'],
@@ -267,7 +268,7 @@ class PluginResource extends Resource
                     ->columnSpanFull(),
                 Select::make('category')
                     ->selectablePlaceholder(false)
-                    ->default(PluginCategory::Plugin->value)
+                    ->default(fn ($livewire) => $livewire->activeTab === 'all' ? null : $livewire->activeTab)
                     ->options(PluginCategory::class),
                 Select::make('panels')
                     ->multiple()
